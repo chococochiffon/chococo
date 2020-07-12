@@ -1,31 +1,46 @@
 <?php
-use myapp\controller\logic\request\request;
-include dirname(__FILE__).'/request.php';
+namespace logic\controller;
 
-class appController {
-    
-    private $_r;
-    
-    private $_h;
-    
+use logic\request\request;
+use view\html\html;
+
+/**
+ * Class appController
+ * @package logic\controller
+ */
+class appController
+{
+    private $request;
+
+    private $html;
+
+    /**
+     * appController constructor.
+     */
     public function __construct() {
-        $this->_callRequest();
-        //$html = new html();
+        $this->request = new request();
+        $this->html = new html();
     }
-    
-    private function _setRequest($request) {
-        $this->_r = $request;
+
+
+
+    /**
+     * @param $name
+     * @return mixed
+     */
+    public function __get($name)
+    {
+        // TODO: Implement __get() method.
+        return $this->{$name};
     }
-    
-    private function _getRequest() {
-        return $this->_r;
-    }
-    
-    public function request(){
-        return $this->_getRequest();
-    }
-    
-    private function _callRequest() {
-        new request();
+
+    /**
+     * @param $name
+     * @param $value
+     */
+    public function __set($name, $value)
+    {
+        // TODO: Implement __set() method.
+        $this->{$name} = $value;
     }
 }

@@ -1,17 +1,17 @@
 <?php
-namespace myapp\model\db\connecter;
+namespace db\connector;
 
-use myapp\model\db\conf\conf;
+use db\conf\conf;
 
 use PDO;
 use PDOStatement;
 use PDOException;
 
 /**
- * Class connecter
- * @package myapp\model\db\connecter
+ * Class connector
+ * @package db\connector
  */
-class connecter
+class connector
 {
     private $_pdo;
 

@@ -1,6 +1,13 @@
 {
     "autoload": {
-        "psr-4": {"myapp\\": "src/"}
+        "psr-4": {
+          "myapp\\": "src/",
+          "models\\": "src/model/",
+          "db\\": "src/model/db/",
+          "view\\": "src/view",
+          "controller\\":"src/controller/",
+          "logic\\": "src/controller/logic/"
+        }
     },
   "require": {
     "ext-pdo": "*"

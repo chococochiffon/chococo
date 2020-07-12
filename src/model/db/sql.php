@@ -1,5 +1,5 @@
 <?php
-namespace myapp\model\db\sql;
+namespace db\sql;
 
 /**
  * Class sql

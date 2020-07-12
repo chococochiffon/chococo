@@ -1,10 +1,10 @@
 <?php
-namespace myapp\model\db\conf;
+namespace db\conf;
 
 class conf {
     public $default = array(
-        'DSN'  => 'mysql:dbname=g9szv_chococo;host=mysql22.conoha.ne.jp',
-        'USER'  => 'g9szv_chococo',
-        'PASSWORD'        => '&$uN1%myAo'
+        'DSN'  => 'mysql:dbname=your_db;host=000.000.0.0',
+        'USER'  => 'your_name',
+        'PASSWORD'        => 'you_password'
     );
 }

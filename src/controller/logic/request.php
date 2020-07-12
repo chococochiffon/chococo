@@ -1,76 +1,44 @@
 <?php
-namespace myapp\controller\logic\request;
+namespace logic\request;
 
-class request {
+/**
+ * Class request
+ * @package logic\request
+ */
+class request
+{
     
-    private $_p = array();
-    
-    private $_g = array();
-    
-    private $_r = array();
-    
-    
+    public $post;
+
+    public $get;
+
     /**
-     * 
-     * @param array $parem
+     * request constructor.
      */
-    public function setPost(array $parem = array()) {
-        $this->_p = $parem;
+    public function __construct()
+    {
+        $this->post = (object)$_POST;
+
+        $this->get = (object)$_GET;
     }
-    
+
     /**
-     * 
-     * @return array
+     * @param $name
+     * @return mixed
      */
-    private function getPost() {
-        return $this->_p;
+    public function __get($name)
+    {
+        // TODO: Implement __get() method.
+        return $this->{$name};
     }
-    
+
     /**
-     * 
-     * @return array
+     * @param $name
+     * @param $value
      */
-    public function post() {
-        return $this->getPost();
-    }
-    
-    /**
-     *
-     * @param array $parem
-     */
-    public function setGet(array $parem = array()) {
-        $this->_g = $parem;
-    }
-    
-    /**
-     *
-     * @return array
-     */
-    private function getGet() {
-        return $this->_g;
-    }
-    
-    /**
-     *
-     * @return array
-     */
-    public function get() {
-        return $this->getGet();
-    }
-    
-    /**
-     * 
-     * @param array $parem
-     */
-    public function setRequest(array $parem = array()) {
-        $this->_r = $parem;
-    }
-    
-    /**
-     *
-     * @return array
-     */
-    public function getRequest() {
-        return $this->_r;
+    public function __set($name, $value)
+    {
+        // TODO: Implement __set() method.
+        $this->{$name} = $value;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 namespace myapp\model\db\datasource;
 
-use myapp\model\db\connecter\connecter;
+use myapp\model\db\connecter\connector;
 use myapp\model\db\sql\sql;
 use PDOStatement;
 
@@ -9,7 +9,7 @@ use PDOStatement;
  * Class datasource
  * @package myapp\model\db\datasource
  */
-class datasource extends connecter {
+class datasource extends connector {
 
     private $_table;
 

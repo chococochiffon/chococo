@@ -1,14 +1,21 @@
 <?php 
-namespace myapp\view;
+namespace view\html;
 
 /**
  * Class html
  * @package myapp\view
  */
-class html {
+class html
+{
+    /**
+     * html constructor.
+     */
+    public function __construct()
+    {
+    }
 
     /**
-     * @param string $fileName
+     * @param string|null $fileName
      * @return string
      */
     public function createPath(string $fileName = null) : string

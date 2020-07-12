@@ -1,6 +1,8 @@
 <?php
+use logic\controller\appController;
 
-class indexController extends appController {
+class indexController extends appController
+{
     
     public function index(){
         
