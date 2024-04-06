@@ -1,0 +1,1 @@
+https://techchallengediaryth.com/nuxt-setup/
