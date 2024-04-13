@@ -1,6 +1,5 @@
 <script setup lang="ts">
 </script>
-
 <template>
   <div>
     <!-- header start  -->
@@ -13,7 +12,7 @@
                 <img class="bi me-2" width="50" height="50" src="@/assets/image/logo.png" />
                 <span class="fs-4">Chococo Games</span>
               </a>
-              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="ナビゲーションの切替">
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="navbar">
                 <span class="navbar-toggler-icon"></span>
               </button>
               <div class="collapse navbar-collapse" id="navbar">
@@ -92,6 +91,6 @@
     <!-- footer end -->
   </div>
 </template>
-
 <style scoped>
+
 </style>
