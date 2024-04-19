@@ -6,10 +6,10 @@
     <header>
       <div class="container">
         <div class="py-1 mb-4 border-bottom">
-          <nav class="navbar">
+          <!-- nav start -->
+          <nav class="navbar navbar-light navbar-expand-md">
             <div class="container-fluid">
               <a href="/" class="navbar-brand d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-                <img class="bi me-2" width="50" height="50" src="@/assets/image/logo.png" />
                 <span class="fs-4">
                   Chococo Games
                 </span>
@@ -18,9 +18,9 @@
                 <span class="navbar-toggler-icon"></span>
               </button>
               <div class="collapse navbar-collapse" id="navbar">
-                <ul class="nav navbar-nav me-auto mb-2">
+                <ul class="nav navbar-nav ms-auto mb-2">
                   <li class="nav-item">
-                    <a href="/" class="nav-link active" aria-current="page">Home</a>
+                    <a href="/" class="nav-link" aria-current="page">Home</a>
                   </li>
                   <li class="nav-item">
                     <a href="/profile" class="nav-link">Profile</a>
@@ -35,6 +35,7 @@
               </div>
             </div>
           </nav>
+          <!-- nav end -->
         </div>
       </div>
     </header>
@@ -51,9 +52,6 @@
       <div class="container">
         <div class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
           <div class="col-md-4 d-flex align-items-center">
-            <a href="/" class="mb-3 me-2 mb-md-0 text-body-secondary text-decoration-none lh-1">
-              <img class="bi me-2" width="30" height="30" src="@/assets/image/logo.png" />
-            </a>
             <span class="mb-3 mb-md-0 text-body-secondary">&copy; 2024 Chococo Chiffon.</span>
           </div>
           <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
