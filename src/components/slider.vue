@@ -18,7 +18,7 @@
 .header-image {
   width: 100%;
   height: 80vh;
-  background: url(@/assets/image/header/ffxiv_20220617_010514_782.png) center center;
+  background: url(/image/header/ffxiv_20220617_010514_782.png) center center;
   background-size: cover;
   position: relative;
 }

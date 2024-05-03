@@ -1,3 +1,7 @@
+html{
+  scroll-behavior: smooth;
+  scroll-padding: 97px;
+}
 body{
   font-family: "Zen Maru Gothic", serif;
   background: linear-gradient(to bottom right, #fffffc, #ffffff);
@@ -85,7 +89,7 @@ body{
   height: auto;
 }
 .nav-bg-color {
-  background: linear-gradient(to bottom right, #fff9fc, #ffffff);
+  background: linear-gradient(to bottom right, #fafdff, #ffffff);
   box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -112,3 +116,4 @@ body{
   font-size: 20px;
   color: #54917f;
 }
+

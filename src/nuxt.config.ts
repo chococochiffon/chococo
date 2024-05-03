@@ -2,13 +2,16 @@
 export default defineNuxtConfig({
   app: {
     // baseURL: '/Nuxt3Bootstrap5AppDemo/', // baseURL: '/<repository>/'
+    ssr:true,
     head: {
       charset: 'utf-8',
       meta: [
-        { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { property: "og:type", content: "website" },
       ],
       script: [
         { src: 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js' },
+        { src: '/js/scroll.js' }
       ],
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -34,5 +37,5 @@ export default defineNuxtConfig({
     "bootstrap/scss/bootstrap.scss",
     "@/assets/styles/main.scss",
   ],
-  devtools: { enabled: true }
+  devtools: { enabled: false }
 })
