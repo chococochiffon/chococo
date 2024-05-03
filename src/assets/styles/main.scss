@@ -1,5 +1,6 @@
 body{
   font-family: "Zen Maru Gothic", serif;
+  background: linear-gradient(to bottom right, #fffffc, #ffffff);
 }
 
 .bd-placeholder-img {
@@ -72,4 +73,42 @@ body{
 }
 .bd-mode-toggle {
   z-index: 1500;
+}
+
+.underline {
+  border-bottom: 1px solid #ff6800;
+  padding-bottom: 2px;
+}
+
+.img-fluid {
+  max-width: 100%;
+  height: auto;
+}
+.nav-bg-color {
+  background: linear-gradient(to bottom right, #fff9fc, #ffffff);
+  box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
+}
+
+
+.f-about-title {
+  color: #106eea;
+}
+.f-edging-text {
+  display     : inline-block;
+  font-size   : 160%;
+  font-weight : bold;
+  color       : #ffffff;
+  text-shadow:  2px  2px 10px #777 ,
+  -2px  2px 10px #777 ,
+  2px -2px 10px #777 ,
+  -2px -2px 10px #777;
+}
+
+.question-icon {
+  font-size: 20px;
+  color: #006eb0;
+}
+.answer-icon {
+  font-size: 20px;
+  color: #54917f;
 }

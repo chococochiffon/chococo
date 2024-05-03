@@ -4,7 +4,7 @@
 
 <template>
   <div>
-    <section style="background-color: #eee;">
+    <section>
       <div class="container py-5">
 
       </div>

@@ -10,12 +10,14 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "bootstrap-icons": "^1.11.3",
     "nuxt": "^3.11.1",
     "usebootstrap": "^3.5.5",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0"
   },
   "devDependencies": {
+    "nuxt-aos": "^1.2.4",
     "sass": "^1.72.0"
   }
 }

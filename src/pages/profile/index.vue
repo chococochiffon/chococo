@@ -62,18 +62,15 @@
                     </p>
                     <p class="mb-1" style="font-size: .77rem;">Web Design</p>
                     <div class="progress rounded" style="height: 5px;">
-                      <div class="progress-bar" role="progressbar" style="width: 40%" aria-valuenow="40"
-                           aria-valuemin="0" aria-valuemax="100"></div>
+                      <div class="progress-bar" role="progressbar" style="width: 40%" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                     <p class="mt-4 mb-1" style="font-size: .77rem;">Frontend</p>
                     <div class="progress rounded mb-2" style="height: 5px;">
-                      <div class="progress-bar" role="progressbar" style="width: 74%" aria-valuenow="74"
-                           aria-valuemin="0" aria-valuemax="100"></div>
+                      <div class="progress-bar" role="progressbar" style="width: 74%" aria-valuenow="74" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                     <p class="mt-4 mb-1" style="font-size: .77rem;">Backend API</p>
                     <div class="progress rounded mb-2" style="height: 5px;">
-                      <div class="progress-bar" role="progressbar" style="width: 98%" aria-valuenow="98"
-                           aria-valuemin="0" aria-valuemax="100"></div>
+                      <div class="progress-bar" role="progressbar" style="width: 98%" aria-valuenow="98" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
                     <p class="mt-4 mb-1" style="font-size: .77rem;">Video Creator</p>
                     <div class="progress rounded mb-2" style="height: 5px;">
