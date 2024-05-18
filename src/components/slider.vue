@@ -5,7 +5,7 @@
 <template>
   <section v-if="route.path === '/'" class="header-image d-flex align-items-center">
     <div class="container aos-init aos-animate f-edging-text" data-aos="zoom-out" data-aos-delay="100">
-      <h2>Chococo Games</h2>
+      <h2>Chococo Chiffon</h2>
       <p>たのしいふらふらライフ――</p>
       <div class="d-flex">
         <a href="#about" class="btn-get-started">Get Started</a>
