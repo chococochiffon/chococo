@@ -1,49 +1,53 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  compatibilityDate: '2026-09-01',
+  ssr: true,
   app: {
-    ssr:true,
     head: {
-      title: 'Chococo Chiffon',
+      // タイトル・description・OGP は app.vue でサイト設定 API の値から設定する
+      htmlAttrs: { lang: 'ja' },
       charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1',
       meta: [
-        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-        { name: 'description', content: 'たのしいふらふらライフをあなたに――。おどろきのお気楽さ！' },
-        { property: 'og:url', content: 'https://chococo-chiffon.com/' },
-        { property: 'og:type', content: 'article' },
-        { property: 'og:title', content: 'Chococo Chiffon' },
-        { property: 'og:description', content: 'たのしいふらふらライフをあなたに――。おどろきのお気楽さ！' },
-        { property: 'og:site_name', content: 'Chococo Chiffon' },
-        { property: 'og:image', content: 'https://chococo-chiffon.com/image/og/chococo.jpg' },
-        { property: 'twitter:card', content: 'summary_large_image' },
+        { property: 'og:type', content: 'website' },
+        { name: 'twitter:card', content: 'summary_large_image' },
       ],
       script: [
-        { src: 'https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js' },
-        { src: '/js/scroll.js' }
+        { src: '/js/scroll.js' },
       ],
       link: [
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
-        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: "" },
-        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic&display=swap' },
-        { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css' },
-      ]
-    }
-  },
-  modules: [
-    'usebootstrap',
-    'nuxt-aos',
-  ],
-  usebootstrap: {
-    bootstrap: {
-      prefix: ``
-    },
-    html: {
-      prefix: `B`
+      ],
     },
   },
   css: [
-    "bootstrap/scss/bootstrap.scss",
-    "@/assets/styles/main.scss",
+    'bootstrap/scss/bootstrap.scss',
+    'bootstrap-icons/font/bootstrap-icons.css',
+    'aos/dist/aos.css',
+    '~/assets/styles/main.scss',
   ],
-  devtools: { enabled: false }
+  runtimeConfig: {
+    // SSR 時(Nuxt サーバー → biscuit)の API のベース URL。NUXT_API_BASE で上書きする
+    apiBase: 'http://localhost/api',
+    public: {
+      // ブラウザ → biscuit の API のベース URL。NUXT_PUBLIC_API_BASE で上書きする
+      apiBase: 'http://localhost/api',
+      // OGP の og:url を組み立てるための公開側サイトの URL。NUXT_PUBLIC_SITE_URL で上書きする
+      siteUrl: 'http://localhost:3000',
+    },
+  },
+  vite: {
+    css: {
+      preprocessorOptions: {
+        scss: {
+          // Bootstrap 5.3 の SCSS が出す Dart Sass の非推奨警告を抑える
+          quietDeps: true,
+          silenceDeprecations: ['import', 'global-builtin', 'color-functions', 'if-function'],
+        },
+      },
+    },
+  },
+  devtools: { enabled: false },
 })

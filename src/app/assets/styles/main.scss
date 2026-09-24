@@ -79,6 +79,12 @@ body{
   z-index: 1500;
 }
 
+// 等幅の見出しに日本語が入っても表示できるよう、日本語は Zen Maru Gothic で表示する
+// (汎用名の monospace より後ろに書くとそこで探索が止まるため、その手前に置く)
+.font-monospace {
+  font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", "Zen Maru Gothic", monospace !important;
+}
+
 .underline {
   border-bottom: 1px solid #ff6800;
   padding-bottom: 2px;
@@ -117,3 +123,28 @@ body{
   color: #54917f;
 }
 
+
+// 管理画面のリッチテキストエディタ(Quill)で作成した本文
+.rich-content {
+  line-height: 1.9;
+  word-break: break-word;
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+  .ql-align-center {
+    text-align: center;
+  }
+  .ql-align-right {
+    text-align: right;
+  }
+  .ql-align-justify {
+    text-align: justify;
+  }
+  @for $i from 1 through 8 {
+    .ql-indent-#{$i} {
+      padding-left: #{$i * 3}em;
+    }
+  }
+}
