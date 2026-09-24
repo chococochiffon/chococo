@@ -119,3 +119,14 @@ export interface LinkItem {
   path: string | null
   date: string | null
 }
+
+// ページネーション付きの一覧(GET /api/articles など、Laravel の API Resource の形)
+export interface Paginated<T> {
+  data: T[]
+  meta: {
+    current_page: number
+    last_page: number
+    per_page: number
+    total: number
+  }
+}
