@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { UserDetail } from '~/types/api'
 
-// スキルリスト: ユーザー詳細をプロフィールカードで表示する(旧 Profile セクションのデザイン)
-// TODO: スキル(項目名と習熟度)は biscuit 側にデータができたらプログレスバーで表示する
+// スキルリスト: ユーザー詳細をプロフィールカードで表示し、スキルを習熟度のバーで並べる(旧 Profile セクションのデザイン)
 defineProps<{
   title: string | null
   subtitle: string | null
@@ -32,7 +31,25 @@ defineProps<{
         <div class="col-lg-8">
           <div class="card mb-4 shadow" data-aos="fade-down" data-aos-delay="100">
             <div class="card-body">
-              <p class="mb-0 lh-base comment">{{ userDetail.comment }}</p>
+              <p v-if="userDetail.comment" class="lh-base comment" :class="userDetail.skills?.length ? 'mb-4' : 'mb-0'">{{ userDetail.comment }}</p>
+              <template v-if="userDetail.skills?.length">
+                <p class="mb-4">
+                  <span v-if="userDisplayName(userDetail)" class="text-primary fst-italic me-1">{{ userDisplayName(userDetail) }}</span>Status
+                </p>
+                <template v-for="(skill, index) in userDetail.skills" :key="skill.id">
+                  <p class="mb-1 skill-name" :class="{ 'mt-4': index > 0 }">{{ skill.name }}</p>
+                  <div
+                    class="progress rounded"
+                    role="progressbar"
+                    :aria-label="skill.name"
+                    :aria-valuenow="skill.level"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                  >
+                    <div class="progress-bar" :style="{ width: `${skill.level}%` }" />
+                  </div>
+                </template>
+              </template>
             </div>
           </div>
         </div>
@@ -53,5 +70,11 @@ defineProps<{
 }
 .comment {
   white-space: pre-line;
+}
+.skill-name {
+  font-size: .77rem;
+}
+.progress {
+  height: 5px;
 }
 </style>

@@ -42,6 +42,13 @@ export interface SinglePage {
 // 名前の表示設定(1: 非表示 / 2: フルネーム / 3: ニックネーム / 4: 名前のみ)
 export type NameSetting = 1 | 2 | 3 | 4
 
+export interface UserSkill {
+  id: number
+  name: string
+  // 習熟度(0〜100)
+  level: number
+}
+
 export interface UserDetail {
   id: number
   first_name: string | null
@@ -50,6 +57,20 @@ export interface UserDetail {
   user_image_url: string | null
   comment: string | null
   name_settings: NameSetting
+  // スキルリストの呼び出しでのみ含まれる
+  skills?: UserSkill[]
+}
+
+// SNS リンクのサービス種別(アイコンの出し分けに使う)
+export type SocialService =
+  | 'x' | 'youtube' | 'github' | 'instagram' | 'facebook' | 'tiktok'
+  | 'twitch' | 'discord' | 'threads' | 'amazon' | 'other'
+
+export interface SocialLink {
+  id: number
+  service: SocialService
+  name: string
+  url: string
 }
 
 export interface SiteSetting {
@@ -57,6 +78,7 @@ export interface SiteSetting {
   description: string | null
   site_icon_url: string | null
   site_image_url: string | null
+  social_links: SocialLink[]
 }
 
 export type CallType = 'short_sentence' | 'original_text' | 'link_list' | 'link' | 'archive' | 'skill_list'

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { SocialService } from '~/types/api'
+
 // フッターには、共通部品(その他)の呼び出しコンテンツのうちナビに出さないもの(記事のリンクなど)を並べる
 const { data: siteSetting } = await useSiteSetting()
 const { data: commonCallContents } = await useCommonCallContents()
@@ -12,13 +14,21 @@ const footerContents = computed(() =>
     .filter(({ content }) => content.kind !== 'single_pages' && content.items.length > 0),
 )
 
-// TODO: SNS リンクは biscuit 側に保存先ができたら API から取得する
-const snsLinks = [
-  { label: 'YouTube', icon: 'bi-youtube', href: 'https://www.youtube.com/@chococo_chiffon' },
-  { label: 'X', icon: 'bi-twitter-x', href: 'https://twitter.com/chococo_chiffon' },
-  { label: 'GitHub', icon: 'bi-github', href: 'https://github.com/chococochiffon' },
-  { label: 'Amazon ほしいものリスト', icon: 'bi-amazon', href: 'https://www.amazon.jp/hz/wishlist/ls/1AAN46WK68KUR?ref_=wl_share' },
-]
+// SNS リンクはサイト設定の並び順でアイコンを並べる(サービス種別ごとの Bootstrap Icons)
+const socialIcons: Record<SocialService, string> = {
+  x: 'bi-twitter-x',
+  youtube: 'bi-youtube',
+  github: 'bi-github',
+  instagram: 'bi-instagram',
+  facebook: 'bi-facebook',
+  tiktok: 'bi-tiktok',
+  twitch: 'bi-twitch',
+  discord: 'bi-discord',
+  threads: 'bi-threads',
+  amazon: 'bi-amazon',
+  other: 'bi-link-45deg',
+}
+const socialLinks = computed(() => siteSetting.value?.social_links ?? [])
 </script>
 
 <template>
@@ -45,10 +55,10 @@ const snsLinks = [
         <div class="col-md-4 d-flex align-items-center">
           <span class="mb-3 mb-md-0 text-body-secondary">&copy; {{ year }} {{ siteTitle }}.</span>
         </div>
-        <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
-          <li v-for="sns in snsLinks" :key="sns.label" class="ms-3">
-            <a class="text-body-secondary fs-4" target="_blank" rel="noopener" :href="sns.href" :aria-label="sns.label">
-              <i class="bi" :class="sns.icon" />
+        <ul v-if="socialLinks.length" class="nav col-md-4 justify-content-end list-unstyled d-flex">
+          <li v-for="link in socialLinks" :key="link.id" class="ms-3">
+            <a class="text-body-secondary fs-4" target="_blank" rel="noopener" :href="link.url" :aria-label="link.name" :title="link.name">
+              <i class="bi" :class="socialIcons[link.service] ?? socialIcons.other" />
             </a>
           </li>
         </ul>
