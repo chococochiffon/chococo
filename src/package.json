@@ -2,22 +2,29 @@
   "name": "nuxt-app",
   "private": true,
   "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
+    "typecheck": "nuxt typecheck",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "bootstrap-icons": "^1.11.3",
-    "nuxt": "^3.11.1",
-    "usebootstrap": "^3.5.5",
-    "vue": "^3.4.21",
-    "vue-router": "^4.3.0"
+    "aos": "^2.3.4",
+    "bootstrap": "^5.3.8",
+    "bootstrap-icons": "^1.13.1",
+    "nuxt": "^4.5.2",
+    "vue": "^3.5.43",
+    "vue-router": "^5.3.1"
   },
   "devDependencies": {
-    "nuxt-aos": "^1.2.4",
-    "sass": "^1.72.0"
+    "@types/aos": "^3.0.7",
+    "sass": "^1.105.0",
+    "typescript": "^5.9.0",
+    "vue-tsc": "^3.0.0"
   }
 }
