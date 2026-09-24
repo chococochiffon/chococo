@@ -3,7 +3,8 @@ import type { SinglePage } from '~/types/api'
 
 // 短文: 固定ページの見出し画像・タイトル・概要を並べて紹介する(旧 About セクションのデザイン)
 defineProps<{
-  heading: string
+  title: string | null
+  subtitle: string | null
   pages: SinglePage[]
 }>()
 </script>
@@ -11,7 +12,7 @@ defineProps<{
 <template>
   <div class="container">
     <div class="row py-5">
-      <SectionHeading :title="heading" subtitle="このサイトについて" />
+      <SectionHeading :title="title" :subtitle="subtitle" />
       <div v-for="page in pages" :key="page.id" class="col-lg-12 shadow mb-4" data-aos="fade-up" data-aos-delay="100">
         <div class="row">
           <div v-if="page.header_image_url" class="col-lg-5 px-0">

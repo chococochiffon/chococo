@@ -26,7 +26,7 @@ const snsLinks = [
     <div class="container">
       <div v-if="footerContents.length" class="row py-4 mt-4 border-top">
         <div v-for="({ callContent, content }, index) in footerContents" :key="index" class="col-md-4 mb-3">
-          <h5 class="fs-6 fw-bold">{{ callContent.call_name }}</h5>
+          <h5 v-if="callContent.title" class="fs-6 fw-bold">{{ callContent.title }}</h5>
           <ul class="list-unstyled small mb-0">
             <template v-if="content.kind === 'articles'">
               <li v-for="article in content.items" :key="article.id" class="mb-1">

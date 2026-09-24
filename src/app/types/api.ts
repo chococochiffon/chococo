@@ -64,7 +64,11 @@ export type CallType = 'short_sentence' | 'original_text' | 'link_list' | 'link'
 // 呼び出しコンテンツ。実データは table_name をキーに入り、単一表示はオブジェクト・一覧表示は配列になる
 export interface CallContent {
   call_type: CallType
+  // 管理用のラベル(画面には表示しない)
   call_name: string
+  // 公開側で表示する見出し・小見出し(未設定は null。見出しが空の枠は見出しなしで表示する)
+  title: string | null
+  subtitle: string | null
   articles?: Article | Article[] | null
   single_pages?: SinglePage | SinglePage[] | null
   user_details?: UserDetail | UserDetail[] | null

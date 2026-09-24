@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { CallContent } from '~/types/api'
 
-// 呼び出しコンテンツ1枠を、呼び出し方(call_type)に応じた部品で表示する。見出しには call_name を使う
+// 呼び出しコンテンツ1枠を、呼び出し方(call_type)に応じた部品で表示する。見出しには title・subtitle を使う
 const props = defineProps<{
   callContent: CallContent
 }>()
@@ -20,27 +20,32 @@ const linkItems = computed(() => toLinkItems(content.value))
   </template>
   <CallContentShortSentence
     v-else-if="callContent.call_type === 'short_sentence' && singlePages.length"
-    :heading="callContent.call_name"
+    :title="callContent.title"
+    :subtitle="callContent.subtitle"
     :pages="singlePages"
   />
   <CallContentArchive
     v-else-if="callContent.call_type === 'archive' && articles.length"
-    :heading="callContent.call_name"
+    :title="callContent.title"
+    :subtitle="callContent.subtitle"
     :articles="articles"
   />
   <CallContentSkillList
     v-else-if="callContent.call_type === 'skill_list' && userDetails.length"
-    :heading="callContent.call_name"
+    :title="callContent.title"
+    :subtitle="callContent.subtitle"
     :user-details="userDetails"
   />
   <CallContentLink
     v-else-if="callContent.call_type === 'link' && linkItems[0]"
-    :heading="callContent.call_name"
+    :title="callContent.title"
+    :subtitle="callContent.subtitle"
     :item="linkItems[0]"
   />
   <CallContentLinkList
     v-else-if="callContent.call_type === 'link_list' && linkItems.length"
-    :heading="callContent.call_name"
+    :title="callContent.title"
+    :subtitle="callContent.subtitle"
     :items="linkItems"
   />
 </template>

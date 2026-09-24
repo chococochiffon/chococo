@@ -4,7 +4,8 @@ import type { LinkItem } from '~/types/api'
 
 // リンクリスト: 記事・固定ページ・ユーザー詳細を小さな画像付きの一覧で並べる
 defineProps<{
-  heading: string
+  title: string | null
+  subtitle: string | null
   items: LinkItem[]
 }>()
 </script>
@@ -12,7 +13,7 @@ defineProps<{
 <template>
   <div class="container">
     <div class="row py-5">
-      <SectionHeading :title="heading" />
+      <SectionHeading :title="title" :subtitle="subtitle" />
       <div class="col-lg-12">
         <div class="list-group shadow" data-aos="fade-up" data-aos-delay="100">
           <component

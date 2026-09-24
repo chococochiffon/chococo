@@ -3,7 +3,8 @@ import type { Article } from '~/types/api'
 
 // アーカイブ: 記事をサムネイル付きのカードで並べる(旧 Contents セクションのデザイン)
 defineProps<{
-  heading: string
+  title: string | null
+  subtitle: string | null
   articles: Article[]
 }>()
 </script>
@@ -11,7 +12,7 @@ defineProps<{
 <template>
   <div class="container">
     <div class="row py-5">
-      <SectionHeading :title="heading" subtitle="活動の記録や実績" />
+      <SectionHeading :title="title" :subtitle="subtitle" />
       <div v-for="(article, index) in articles" :key="article.id" class="col-lg-4 py-2 my-2">
         <div class="card shadow h-100" :data-aos="index % 2 === 0 ? 'fade-down' : 'fade-up'" data-aos-delay="100">
           <img

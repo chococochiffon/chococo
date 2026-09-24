@@ -3,7 +3,8 @@ import type { LinkItem } from '~/types/api'
 
 // リンク: 1件の記事・固定ページを画像付きの横長カードで案内する
 defineProps<{
-  heading: string
+  title: string | null
+  subtitle: string | null
   item: LinkItem
 }>()
 </script>
@@ -11,7 +12,7 @@ defineProps<{
 <template>
   <div class="container">
     <div class="row py-5">
-      <SectionHeading :title="heading" />
+      <SectionHeading :title="title" :subtitle="subtitle" />
       <div class="col-lg-12">
         <div class="card shadow overflow-hidden" data-aos="fade-up" data-aos-delay="100">
           <div class="row g-0">

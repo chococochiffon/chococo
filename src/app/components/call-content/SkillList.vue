@@ -4,7 +4,8 @@ import type { UserDetail } from '~/types/api'
 // スキルリスト: ユーザー詳細をプロフィールカードで表示する(旧 Profile セクションのデザイン)
 // TODO: スキル(項目名と習熟度)は biscuit 側にデータができたらプログレスバーで表示する
 defineProps<{
-  heading: string
+  title: string | null
+  subtitle: string | null
   userDetails: UserDetail[]
 }>()
 </script>
@@ -12,7 +13,7 @@ defineProps<{
 <template>
   <div class="container">
     <div class="row py-5">
-      <SectionHeading :title="heading" subtitle="わたしについて" />
+      <SectionHeading :title="title" :subtitle="subtitle" />
       <template v-for="userDetail in userDetails" :key="userDetail.id">
         <div class="col-lg-4">
           <div class="card mb-4 shadow" data-aos="fade-right" data-aos-delay="100">
