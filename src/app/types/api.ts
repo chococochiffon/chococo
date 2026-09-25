@@ -103,6 +103,28 @@ export type CallContentItems =
   | { kind: 'user_details', items: UserDetail[] }
   | { kind: null, items: [] }
 
+// Q&A の回答。question があれば、この回答を選ぶと次の質問へ進み、null なら answer_text を表示して終わる
+export interface QaAnswer {
+  id: number
+  answer_text: string | null
+  question: QaQuestion | null
+}
+
+export interface QaQuestion {
+  id: number
+  question_text: string
+  answers: QaAnswer[]
+}
+
+// GET /api/question-answers の要素。簡易版(top_view が true)は short_* を持ち、分岐ありは question に最初の質問を持つ
+export interface QuestionAnswer {
+  id: number
+  top_view: boolean
+  short_question_text: string | null
+  short_answer_text: string | null
+  question: QaQuestion | null
+}
+
 // GET /api/resolve のレスポンス
 export type ResolveResponse =
   | { type: 'top', data: null, call_contents: CallContent[] }

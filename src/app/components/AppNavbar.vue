@@ -50,6 +50,9 @@ watch(() => route.fullPath, () => {
                 <li v-for="page in navPages" :key="page.id" class="nav-item">
                   <NuxtLink :to="page.path" class="nav-link" active-class="active">{{ page.title }}</NuxtLink>
                 </li>
+                <li class="nav-item">
+                  <NuxtLink to="/faq" class="nav-link" active-class="active">FAQ</NuxtLink>
+                </li>
               </ul>
             </div>
           </div>

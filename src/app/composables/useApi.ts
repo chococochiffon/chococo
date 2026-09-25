@@ -1,5 +1,5 @@
 import type { UseFetchOptions } from 'nuxt/app'
-import type { CallContent, SiteSetting } from '~/types/api'
+import type { CallContent, QuestionAnswer, SiteSetting } from '~/types/api'
 
 /**
  * biscuit の API を useFetch で呼び出す(パスは /api からの相対。例: '/resolve')。
@@ -31,5 +31,17 @@ export function useCommonCallContents() {
     query: { place: 3 },
     $fetch: useNuxtApp().$api as typeof $fetch,
     transform: (response: { data: CallContent[] }) => response.data,
+  })
+}
+
+/**
+ * Q&A 一覧(登録順)を取得する。topView を指定すると簡易版(true)・分岐あり(false)だけに絞り込む。
+ */
+export function useQuestionAnswers(topView?: boolean) {
+  return useFetch('/question-answers', {
+    key: `question-answers:${topView ?? 'all'}`,
+    query: topView === undefined ? {} : { top_view: topView ? 1 : 0 },
+    $fetch: useNuxtApp().$api as typeof $fetch,
+    transform: (response: { data: QuestionAnswer[] }) => response.data,
   })
 }
