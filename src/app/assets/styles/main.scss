@@ -148,3 +148,8 @@ body{
     }
   }
 }
+
+// FAQ の質問・回答の文章(管理画面で入力した改行をそのまま表示する)
+.faq-text {
+  white-space: pre-wrap;
+}
