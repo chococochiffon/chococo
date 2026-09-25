@@ -37,5 +37,6 @@ docker compose down
 - `src/app/components/call-content/` — 呼び出しコンテンツを `call_type`（`short_sentence`/`original_text`/`link_list`/`link`/`archive`/`skill_list`）ごとに表示する部品。`Block.vue` が振り分ける。
 - `src/app/components/page/` — 記事・固定ページの本文。
 - ナビ・フッターは `GET /api/call-contents?place=3`（その他）、タイトル・OGP などは `GET /api/site-setting` から取得する。
+- `src/app/components/TopHero.vue` — トップのメインビジュアル。サイト設定の `top_slider_images`（16:9）を `TopSlider.vue` でフェード切り替え（5秒ごと・ホバー中と視差効果を減らす設定では停止、前後ボタン・インジケーター付き、`url` があればリンク）で表示する。未登録なら既定の画像にサイト名・説明を重ねる（サイト設定の `site_image` は OGP 用）。
 - 型チェックは `src` で `npm run typecheck`。
 - Docker で起動中にページファイル（`src/app/pages/`）を追加した場合は、`docker compose restart` でルートを読み込み直す。

@@ -73,12 +73,24 @@ export interface SocialLink {
   url: string
 }
 
+// トップのスライダー画像(16:9、1920x1080)。url はクリック時のリンク先(未設定は null)
+export interface TopSliderImage {
+  id: number
+  image_url: string
+  url: string | null
+}
+
 export interface SiteSetting {
   site_title: string | null
   description: string | null
+  // 公開側フロントの URL・API の URL(未設定は null)
+  front_url: string | null
+  api_url: string | null
   site_icon_url: string | null
+  // OGP 用の画像
   site_image_url: string | null
   social_links: SocialLink[]
+  top_slider_images: TopSliderImage[]
 }
 
 export type CallType = 'short_sentence' | 'original_text' | 'link_list' | 'link' | 'archive' | 'skill_list'
