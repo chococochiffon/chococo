@@ -9,8 +9,10 @@ const slides = computed(() => siteSetting.value?.top_slider_images ?? [])
 </script>
 
 <template>
-  <section v-if="slides.length" class="top-hero">
-    <TopSlider :slides="slides" />
+  <section v-if="slides.length" class="top-hero-slider-wrap">
+    <div class="top-hero top-hero-slider">
+      <TopSlider :slides="slides" />
+    </div>
   </section>
   <section v-else class="top-hero top-hero-fallback d-flex align-items-center">
     <div class="container f-edging-text" data-aos="zoom-out" data-aos-delay="100">
@@ -24,13 +26,25 @@ const slides = computed(() => siteSetting.value?.top_slider_images ?? [])
 </template>
 
 <style scoped>
-/* 16:9 の画像全体が見えるよう幅に合わせて高さを決め、大きな画面では画面の高さの8割までに収める */
 .top-hero {
   position: relative;
   width: 100%;
   aspect-ratio: 16 / 9;
   max-height: 80vh;
   overflow: hidden;
+}
+/*
+ * スライダー画像(16:9)は切り取らずに全体を見せるため、ヘッダーを除いた画面の高さに収まる幅まで縮めて中央に置く。
+ * (高さだけを抑えると画像の上下が切れて、ヘッダーの下に隠れたように見える)
+ * 縮めたときに左右にできる余白には背景色を敷く。--header-height は layouts/default.vue で設定する
+ */
+.top-hero-slider-wrap {
+  background: #f7f3ee;
+}
+.top-hero-slider {
+  width: min(100%, calc((100svh - var(--header-height, 97px)) * 16 / 9));
+  max-height: none;
+  margin-inline: auto;
 }
 /* 既定の画像ではタイトル・説明を重ねるため、小さい画面でも高さを確保する */
 .top-hero-fallback {
