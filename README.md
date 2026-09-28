@@ -42,4 +42,4 @@ docker compose down
 - 型チェックは `src` で `npm run typecheck`。
 - ESLint（`@nuxt/eslint`。設定は `src/eslint.config.mjs`、書式も ESLint で揃える）は `src` で `npm run lint`、自動修正は `npm run lint:fix`。
 - コンテナの `node_modules` はホストと共有しない（匿名ボリューム）。`package.json` の依存関係を変えたら、`docker compose up --build -V` で作り直す（または `docker compose exec nuxt-app npm install`）。
-- Docker で起動中にページファイル（`src/app/pages/`）を追加した場合は、`docker compose restart` でルートを読み込み直す。
+- Docker で起動中にページファイル（`src/app/pages/`）や部品（`src/app/components/`）を追加した場合は、`docker compose restart` でルート・部品を読み込み直す。部品を追加して再起動しないと、サーバー側では表示されても、ブラウザ側で「Failed to resolve component」の警告が出て表示が消えることがある。
