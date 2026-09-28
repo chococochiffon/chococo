@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { UserDetail } from '~/types/api'
+import { MAX_SKILL_LEVEL, type UserDetail } from '~/types/api'
 
 // スキルリスト: ユーザー詳細をプロフィールカードで表示し、スキルを習熟度のバーで並べる(旧 Profile セクションのデザイン)
 defineProps<{
@@ -44,9 +44,9 @@ defineProps<{
                     :aria-label="skill.name"
                     :aria-valuenow="skill.level"
                     aria-valuemin="0"
-                    aria-valuemax="100"
+                    :aria-valuemax="MAX_SKILL_LEVEL"
                   >
-                    <div class="progress-bar" :style="{ width: `${skill.level}%` }" />
+                    <div class="progress-bar" :style="{ width: `${skill.level / MAX_SKILL_LEVEL * 100}%` }" />
                   </div>
                 </template>
               </template>
