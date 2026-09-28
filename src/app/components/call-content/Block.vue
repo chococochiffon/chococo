@@ -13,6 +13,8 @@ const userDetails = computed(() => (content.value.kind === 'user_details' ? cont
 const galleryImages = computed(() => (content.value.kind === 'gallery_images' ? content.value.items : []))
 const questionAnswers = computed(() => (content.value.kind === 'question_answers' ? content.value.items : []))
 const linkItems = computed(() => toLinkItems(content.value))
+// 記事型のカスタムページのアーカイブは、記事一覧ではなく種類の一覧へ案内する
+const customPageType = computed(() => customPageTypeOf(props.callContent))
 </script>
 
 <template>
@@ -31,6 +33,8 @@ const linkItems = computed(() => toLinkItems(content.value))
     :title="callContent.title"
     :subtitle="callContent.subtitle"
     :articles="articles"
+    :list-path="customPageType?.path"
+    :list-label="customPageType ? `${customPageType.label}一覧へ` : undefined"
   />
   <CallContentSkillList
     v-else-if="callContent.call_type === 'skill_list' && userDetails.length"

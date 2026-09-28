@@ -111,6 +111,8 @@ export interface CallContent {
   user_details?: UserDetail | UserDetail[] | null
   gallery_images?: GalleryImage | GalleryImage[] | null
   question_answers?: QuestionAnswer | QuestionAnswer[] | null
+  // カスタムページは本体のテーブル名(例: user_make_recipes)がキーになる
+  [customPageTable: `user_make_${string}`]: CustomPage | CustomPage[] | null | undefined
 }
 
 // 呼び出しコンテンツの実データを種別ごとに配列へそろえたもの
@@ -159,11 +161,56 @@ export interface GalleryImage {
   category: GalleryCategory | null
 }
 
+// カスタムページの種類(GET /api/custom-page-types の要素)。path は一覧の URL(例: /recipes)
+export interface CustomPageType {
+  name: string
+  label: string
+  base_type: 'article' | 'single_page'
+  path: string
+}
+
+// カスタムフォームの項目(カスタムページの詳細でだけ返る)。value は未入力なら null、チェックボックスは選んだ値の配列
+export interface CustomField {
+  name: string
+  type: 'text' | 'date' | 'textarea' | 'email' | 'select' | 'radio' | 'checkbox'
+  value: string | string[] | null
+}
+
+interface CustomPageBase {
+  id: number
+  title: string
+  slug: string | null
+  path: string
+  custom_page_type: CustomPageType
+  custom_fields?: CustomField[]
+}
+
+// 記事型のカスタムページ(記事と同じ項目名)
+export interface CustomArticlePage extends CustomPageBase {
+  content: string | null
+  thumbnail_url: string | null
+  author_name: string | null
+  tags: Tag[]
+  published_at: string | null
+  updated_at: string | null
+}
+
+// 固定ページ型のカスタムページ(固定ページと同じ項目名。詳細はカスタムページの詳細でだけ返る)
+export interface CustomSinglePage extends CustomPageBase {
+  short_sentences: string | null
+  header_image_url: string | null
+  details?: SinglePageDetail[]
+}
+
+export type CustomPage = CustomArticlePage | CustomSinglePage
+
 // GET /api/resolve のレスポンス
 export type ResolveResponse =
   | { type: 'top', data: null, call_contents: CallContent[] }
   | { type: 'article', data: Article, call_contents: CallContent[] }
   | { type: 'single_page', data: SinglePage, call_contents: CallContent[] }
+  | { type: 'custom_page_list', data: null, custom_page_type: CustomPageType, call_contents: CallContent[] }
+  | { type: 'custom_page', data: CustomPage, custom_page_type: CustomPageType, call_contents: CallContent[] }
 
 // リンク系(リンク・リンクリスト)の表示用に、記事・固定ページ・ユーザー詳細をそろえた項目
 export interface LinkItem {

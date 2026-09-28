@@ -1,5 +1,5 @@
 import type { UseFetchOptions } from 'nuxt/app'
-import type { CallContent, GalleryCategory, GalleryImage, QuestionAnswer, SiteSetting } from '~/types/api'
+import type { CallContent, CustomPageType, GalleryCategory, GalleryImage, QuestionAnswer, SiteSetting } from '~/types/api'
 
 /**
  * biscuit の API を useFetch で呼び出す(パスは /api からの相対。例: '/resolve')。
@@ -65,5 +65,16 @@ export function useGalleryCategories() {
     key: 'gallery-categories',
     $fetch: useNuxtApp().$api as typeof $fetch,
     transform: (response: { data: GalleryCategory[] }) => response.data,
+  })
+}
+
+/**
+ * カスタムページの種類の一覧(並び順)を取得する(ナビに種類ごとの一覧へのリンクを並べる)。
+ */
+export function useCustomPageTypes() {
+  return useFetch('/custom-page-types', {
+    key: 'custom-page-types',
+    $fetch: useNuxtApp().$api as typeof $fetch,
+    transform: (response: { data: CustomPageType[] }) => response.data,
   })
 }

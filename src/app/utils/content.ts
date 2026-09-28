@@ -1,4 +1,4 @@
-import type { CallContent, CallContentItems, LinkItem, UserDetail } from '~/types/api'
+import type { Article, CallContent, CallContentItems, CustomArticlePage, CustomPage, CustomPageType, CustomSinglePage, LinkItem, SinglePage, UserDetail } from '~/types/api'
 
 /**
  * 呼び出しコンテンツの実データ(単一表示はオブジェクト・一覧表示は配列)を、種別ごとに配列へそろえる。
@@ -21,6 +21,15 @@ export function callContentItems(callContent: CallContent): CallContentItems {
   }
   if ('question_answers' in callContent) {
     return { kind: 'question_answers', items: toArray(callContent.question_answers) }
+  }
+
+  // カスタムページは、記事型を記事・固定ページ型を固定ページとして同じ部品で表示する
+  const customPageTable = Object.keys(callContent).find(key => key.startsWith('user_make_')) as `user_make_${string}` | undefined
+  if (customPageTable) {
+    const pages = toArray(callContent[customPageTable])
+    return pages.every(isCustomArticlePage)
+      ? { kind: 'articles', items: pages.map(customPageAsArticle) }
+      : { kind: 'single_pages', items: pages.filter(isCustomSinglePage).map(customPageAsSinglePage) }
   }
 
   return { kind: null, items: [] }
@@ -106,4 +115,43 @@ export function excerpt(html: string | null, length = 120): string {
   const text = html.replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim()
 
   return text.length > length ? `${text.slice(0, length)}…` : text
+}
+
+/**
+ * 呼び出しコンテンツの実データがカスタムページなら、その種類(カスタムページでない・データがない場合は null)。
+ */
+export function customPageTypeOf(callContent: CallContent): CustomPageType | null {
+  const customPageTable = Object.keys(callContent).find(key => key.startsWith('user_make_')) as `user_make_${string}` | undefined
+  const value = customPageTable ? callContent[customPageTable] : null
+  const first = Array.isArray(value) ? value[0] : value
+
+  return first?.custom_page_type ?? null
+}
+
+/**
+ * 記事型のカスタムページかどうか。
+ */
+export function isCustomArticlePage(page: CustomPage): page is CustomArticlePage {
+  return page.custom_page_type.base_type === 'article'
+}
+
+/**
+ * 固定ページ型のカスタムページかどうか。
+ */
+export function isCustomSinglePage(page: CustomPage): page is CustomSinglePage {
+  return page.custom_page_type.base_type === 'single_page'
+}
+
+/**
+ * 記事型のカスタムページを、記事の部品(カード・本文)で表示できる形にする(親パスは持たない)。
+ */
+export function customPageAsArticle(page: CustomArticlePage): Article {
+  return { ...page, parent_path: null }
+}
+
+/**
+ * 固定ページ型のカスタムページを、固定ページの部品(短文・本文)で表示できる形にする(親パスは持たず、スラッグは必須)。
+ */
+export function customPageAsSinglePage(page: CustomSinglePage): SinglePage {
+  return { ...page, parent_path: null, slug: page.slug ?? String(page.id) }
 }

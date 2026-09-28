@@ -4,6 +4,7 @@ import type { SinglePage } from '~/types/api'
 // ナビには、共通部品(その他)の呼び出しコンテンツのうち固定ページのリンクを並べる
 const { data: siteSetting } = await useSiteSetting()
 const { data: commonCallContents } = await useCommonCallContents()
+const { data: customPageTypes } = await useCustomPageTypes()
 
 const siteTitle = computed(() => siteSetting.value?.site_title || 'Chococo Chiffon')
 
@@ -52,6 +53,16 @@ watch(() => route.fullPath, () => {
                 </li>
                 <li class="nav-item">
                   <NuxtLink to="/articles" class="nav-link" active-class="active">Articles</NuxtLink>
+                </li>
+                <li v-for="customPageType in customPageTypes ?? []" :key="customPageType.name" class="nav-item">
+                  <!-- 一覧(/recipes)に加え、その下の各ページ(/recipes/xxx)を開いているときも選択中にする -->
+                  <NuxtLink
+                    :to="customPageType.path"
+                    class="nav-link"
+                    :class="{ active: route.path === customPageType.path || route.path.startsWith(`${customPageType.path}/`) }"
+                  >
+                    {{ customPageType.label }}
+                  </NuxtLink>
                 </li>
                 <li class="nav-item">
                   <NuxtLink to="/gallery" class="nav-link" active-class="active">Gallery</NuxtLink>
