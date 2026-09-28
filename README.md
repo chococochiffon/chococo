@@ -39,4 +39,6 @@ docker compose down
 - ナビ・フッターは `GET /api/call-contents?place=3`（その他）、タイトル・OGP などは `GET /api/site-setting` から取得する。
 - `src/app/components/TopHero.vue` — トップのメインビジュアル。サイト設定の `top_slider_images`（16:9。切り取らずに全体を見せるため、ヘッダーを除いた画面の高さに収まる幅まで縮めて中央に置く）を `TopSlider.vue` でフェード切り替え（5秒ごと・ホバー中と視差効果を減らす設定では停止、前後ボタン・インジケーター付き、`url` があればリンク）で表示する。未登録なら既定の画像にサイト名・説明を重ねる（サイト設定の `site_image` は OGP 用）。
 - 型チェックは `src` で `npm run typecheck`。
+- ESLint（`@nuxt/eslint`。設定は `src/eslint.config.mjs`、書式も ESLint で揃える）は `src` で `npm run lint`、自動修正は `npm run lint:fix`。
+- コンテナの `node_modules` はホストと共有しない（匿名ボリューム）。`package.json` の依存関係を変えたら、`docker compose up --build -V` で作り直す（または `docker compose exec nuxt-app npm install`）。
 - Docker で起動中にページファイル（`src/app/pages/`）を追加した場合は、`docker compose restart` でルートを読み込み直す。

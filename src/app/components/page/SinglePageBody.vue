@@ -34,6 +34,7 @@ defineProps<{
       >
         <h2 v-if="detail.sub_title" class="fs-4 font-monospace mb-3">{{ detail.sub_title }}</h2>
         <!-- 詳細は管理画面のリッチテキストエディタ(Quill)で作成した HTML -->
+        <!-- eslint-disable-next-line vue/no-v-html -- 管理者が作成した HTML をそのまま表示する -->
         <div class="rich-content" v-html="detail.contents" />
       </section>
     </div>
