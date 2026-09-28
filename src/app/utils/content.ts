@@ -16,6 +16,12 @@ export function callContentItems(callContent: CallContent): CallContentItems {
   if ('user_details' in callContent) {
     return { kind: 'user_details', items: toArray(callContent.user_details) }
   }
+  if ('gallery_images' in callContent) {
+    return { kind: 'gallery_images', items: toArray(callContent.gallery_images) }
+  }
+  if ('question_answers' in callContent) {
+    return { kind: 'question_answers', items: toArray(callContent.question_answers) }
+  }
 
   return { kind: null, items: [] }
 }

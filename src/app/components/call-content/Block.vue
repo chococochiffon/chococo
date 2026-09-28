@@ -10,6 +10,8 @@ const content = computed(() => callContentItems(props.callContent))
 const articles = computed(() => (content.value.kind === 'articles' ? content.value.items : []))
 const singlePages = computed(() => (content.value.kind === 'single_pages' ? content.value.items : []))
 const userDetails = computed(() => (content.value.kind === 'user_details' ? content.value.items : []))
+const galleryImages = computed(() => (content.value.kind === 'gallery_images' ? content.value.items : []))
+const questionAnswers = computed(() => (content.value.kind === 'question_answers' ? content.value.items : []))
 const linkItems = computed(() => toLinkItems(content.value))
 </script>
 
@@ -35,6 +37,18 @@ const linkItems = computed(() => toLinkItems(content.value))
     :title="callContent.title"
     :subtitle="callContent.subtitle"
     :user-details="userDetails"
+  />
+  <CallContentTileList
+    v-else-if="callContent.call_type === 'tile_list' && galleryImages.length"
+    :title="callContent.title"
+    :subtitle="callContent.subtitle"
+    :images="galleryImages"
+  />
+  <CallContentAccordion
+    v-else-if="callContent.call_type === 'accordion' && questionAnswers.length"
+    :title="callContent.title"
+    :subtitle="callContent.subtitle"
+    :question-answers="questionAnswers"
   />
   <CallContentLink
     v-else-if="callContent.call_type === 'link' && linkItems[0]"

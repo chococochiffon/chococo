@@ -34,7 +34,8 @@ docker compose down
 
 - `src/app/pages/[...slug].vue` — すべての URL を受け、biscuit の `GET /api/resolve?path=...` でトップ・固定ページ・記事を出し分ける。
 - `src/app/pages/articles.vue` — 記事一覧（`GET /api/articles`、`?page=N` でページ送り）。`/articles` だけに一致し、`/articles/xxx` などの記事は catch-all ページが表示する。
-- `src/app/components/call-content/` — 呼び出しコンテンツを `call_type`（`short_sentence`/`original_text`/`link_list`/`link`/`archive`/`skill_list`）ごとに表示する部品。`Block.vue` が振り分ける。
+- `src/app/components/call-content/` — 呼び出しコンテンツを `call_type`（`short_sentence`/`original_text`/`link_list`/`link`/`archive`/`skill_list`/`tile_list`/`accordion`）ごとに表示する部品。`Block.vue` が振り分ける。タイルリスト（ギャラリー画像）は `components/gallery/Tiles.vue`、開閉パネル（簡易版の Q&A）は FAQ と同じ `components/faq/Item.vue` で表示する。
+- `src/app/pages/gallery.vue` — ギャラリー（`GET /api/gallery-images` を並び順ですべて表示し、`GET /api/gallery-categories` の分類のボタンで絞り込む）。画像をクリックすると名前・コメント付きで拡大表示する。
 - `src/app/components/page/` — 記事・固定ページの本文。
 - ナビ・フッターは `GET /api/call-contents?place=3`（その他）、タイトル・OGP などは `GET /api/site-setting` から取得する。
 - `src/app/components/TopHero.vue` — トップのメインビジュアル。サイト設定の `top_slider_images`（16:9。切り取らずに全体を見せるため、ヘッダーを除いた画面の高さに収まる幅まで縮めて中央に置く）を `TopSlider.vue` でフェード切り替え（5秒ごと・ホバー中と視差効果を減らす設定では停止、前後ボタン・インジケーター付き、`url` があればリンク）で表示する。未登録なら既定の画像にサイト名・説明を重ねる（サイト設定の `site_image` は OGP 用）。

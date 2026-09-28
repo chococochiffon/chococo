@@ -1,5 +1,5 @@
 import type { UseFetchOptions } from 'nuxt/app'
-import type { CallContent, QuestionAnswer, SiteSetting } from '~/types/api'
+import type { CallContent, GalleryCategory, GalleryImage, QuestionAnswer, SiteSetting } from '~/types/api'
 
 /**
  * biscuit の API を useFetch で呼び出す(パスは /api からの相対。例: '/resolve')。
@@ -43,5 +43,27 @@ export function useQuestionAnswers(topView?: boolean) {
     query: topView === undefined ? {} : { top_view: topView ? 1 : 0 },
     $fetch: useNuxtApp().$api as typeof $fetch,
     transform: (response: { data: QuestionAnswer[] }) => response.data,
+  })
+}
+
+/**
+ * ギャラリー画像の一覧(並び順)をすべて取得する。
+ */
+export function useGalleryImages() {
+  return useFetch('/gallery-images', {
+    key: 'gallery-images',
+    $fetch: useNuxtApp().$api as typeof $fetch,
+    transform: (response: { data: GalleryImage[] }) => response.data,
+  })
+}
+
+/**
+ * ギャラリー画像の分類の一覧(並び順)をすべて取得する。
+ */
+export function useGalleryCategories() {
+  return useFetch('/gallery-categories', {
+    key: 'gallery-categories',
+    $fetch: useNuxtApp().$api as typeof $fetch,
+    transform: (response: { data: GalleryCategory[] }) => response.data,
   })
 }
