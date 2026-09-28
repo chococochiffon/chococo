@@ -96,7 +96,7 @@ export interface SiteSetting {
   top_slider_images: TopSliderImage[]
 }
 
-export type CallType = 'short_sentence' | 'original_text' | 'link_list' | 'link' | 'archive' | 'skill_list'
+export type CallType = 'short_sentence' | 'original_text' | 'link_list' | 'link' | 'archive' | 'skill_list' | 'tile_list' | 'accordion'
 
 // 呼び出しコンテンツ。実データは table_name をキーに入り、単一表示はオブジェクト・一覧表示は配列になる
 export interface CallContent {
@@ -109,6 +109,8 @@ export interface CallContent {
   articles?: Article | Article[] | null
   single_pages?: SinglePage | SinglePage[] | null
   user_details?: UserDetail | UserDetail[] | null
+  gallery_images?: GalleryImage | GalleryImage[] | null
+  question_answers?: QuestionAnswer | QuestionAnswer[] | null
 }
 
 // 呼び出しコンテンツの実データを種別ごとに配列へそろえたもの
@@ -116,6 +118,8 @@ export type CallContentItems =
   | { kind: 'articles', items: Article[] }
   | { kind: 'single_pages', items: SinglePage[] }
   | { kind: 'user_details', items: UserDetail[] }
+  | { kind: 'gallery_images', items: GalleryImage[] }
+  | { kind: 'question_answers', items: QuestionAnswer[] }
   | { kind: null, items: [] }
 
 // Q&A の回答。question があれば、この回答を選ぶと次の質問へ進み、null なら answer_text を表示して終わる
@@ -138,6 +142,21 @@ export interface QuestionAnswer {
   short_question_text: string | null
   short_answer_text: string | null
   question: QaQuestion | null
+}
+
+// ギャラリー画像の分類(GET /api/gallery-categories の要素)
+export interface GalleryCategory {
+  id: number
+  name: string
+}
+
+// ギャラリー画像(GET /api/gallery-images の要素)。category は未分類なら null
+export interface GalleryImage {
+  id: number
+  name: string
+  comment: string | null
+  image_url: string
+  category: GalleryCategory | null
 }
 
 // GET /api/resolve のレスポンス
