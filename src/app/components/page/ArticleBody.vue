@@ -23,6 +23,7 @@ defineProps<{
     </header>
     <img v-if="article.thumbnail_url" :src="article.thumbnail_url" :alt="article.title" class="img-fluid rounded shadow mb-4 d-block mx-auto">
     <!-- 本文は管理画面のリッチテキストエディタ(Quill)で作成した HTML -->
+    <!-- eslint-disable-next-line vue/no-v-html -- 管理者が作成した HTML をそのまま表示する -->
     <div class="rich-content" v-html="article.content" />
   </article>
 </template>

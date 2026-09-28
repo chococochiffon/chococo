@@ -1,7 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  compatibilityDate: '2026-09-01',
+  modules: ['@nuxt/eslint'],
   ssr: true,
+  devtools: { enabled: false },
   app: {
     head: {
       // タイトル・description・OGP は app.vue でサイト設定 API の値から設定する
@@ -38,6 +39,7 @@ export default defineNuxtConfig({
       siteUrl: 'http://localhost:3000',
     },
   },
+  compatibilityDate: '2026-09-01',
   vite: {
     css: {
       preprocessorOptions: {
@@ -49,5 +51,10 @@ export default defineNuxtConfig({
       },
     },
   },
-  devtools: { enabled: false },
+  eslint: {
+    config: {
+      // 書式(インデント・引用符・セミコロンなし・末尾カンマなど)も ESLint で揃える
+      stylistic: true,
+    },
+  },
 })
