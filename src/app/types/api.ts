@@ -42,10 +42,13 @@ export interface SinglePage {
 // 名前の表示設定(1: 非表示 / 2: フルネーム / 3: ニックネーム / 4: 名前のみ)
 export type NameSetting = 1 | 2 | 3 | 4
 
+// スキルの習熟度の上限(1〜この値の 5 段階)
+export const MAX_SKILL_LEVEL = 5
+
 export interface UserSkill {
   id: number
   name: string
-  // 習熟度(0〜100)
+  // 習熟度(1〜MAX_SKILL_LEVEL)
   level: number
 }
 
