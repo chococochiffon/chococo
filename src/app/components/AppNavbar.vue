@@ -51,6 +51,9 @@ watch(() => route.fullPath, () => {
                   <NuxtLink :to="page.path" class="nav-link" active-class="active">{{ page.title }}</NuxtLink>
                 </li>
                 <li class="nav-item">
+                  <NuxtLink to="/articles" class="nav-link" active-class="active">Articles</NuxtLink>
+                </li>
+                <li class="nav-item">
                   <NuxtLink to="/gallery" class="nav-link" active-class="active">Gallery</NuxtLink>
                 </li>
                 <li class="nav-item">
