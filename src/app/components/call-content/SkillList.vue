@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { MAX_SKILL_LEVEL, type UserDetail } from '~/types/api'
 
-// スキルリスト: ユーザー詳細をプロフィールカードで表示し、スキルを習熟度のバーで並べる(旧 Profile セクションのデザイン)
+// スキルリスト: ユーザー詳細をプロフィールカードで表示し、スキルを習熟度の星で並べる(旧 Profile セクションのデザイン)
 defineProps<{
   title: string | null
   subtitle: string | null
@@ -37,16 +37,17 @@ defineProps<{
                   <span v-if="userDisplayName(userDetail)" class="text-primary fst-italic me-1">{{ userDisplayName(userDetail) }}</span>Status
                 </p>
                 <template v-for="(skill, index) in userDetail.skills" :key="skill.id">
-                  <p class="mb-1 skill-name" :class="{ 'mt-4': index > 0 }">{{ skill.name }}</p>
-                  <div
-                    class="progress rounded"
-                    role="progressbar"
-                    :aria-label="skill.name"
-                    :aria-valuenow="skill.level"
-                    aria-valuemin="0"
-                    :aria-valuemax="MAX_SKILL_LEVEL"
-                  >
-                    <div class="progress-bar" :style="{ width: `${skill.level / MAX_SKILL_LEVEL * 100}%` }" />
+                  <div class="d-flex align-items-center justify-content-between" :class="{ 'mt-3': index > 0 }">
+                    <p class="mb-0 skill-name">{{ skill.name }}</p>
+                    <!-- 習熟度を MAX_SKILL_LEVEL 個の星で表示し、習熟度の数だけ塗りつぶす -->
+                    <span class="text-warning text-nowrap stars" role="img" :aria-label="`${skill.name}: ${skill.level} / ${MAX_SKILL_LEVEL}`">
+                      <i
+                        v-for="star in MAX_SKILL_LEVEL"
+                        :key="star"
+                        :class="star <= skill.level ? 'bi bi-star-fill' : 'bi bi-star'"
+                        aria-hidden="true"
+                      />
+                    </span>
                   </div>
                 </template>
               </template>
@@ -74,7 +75,8 @@ defineProps<{
 .skill-name {
   font-size: .77rem;
 }
-.progress {
-  height: 5px;
+.stars {
+  font-size: .85rem;
+  letter-spacing: .15em;
 }
 </style>
