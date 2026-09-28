@@ -35,6 +35,7 @@ docker compose down
 - `src/app/pages/[...slug].vue` — すべての URL を受け、biscuit の `GET /api/resolve?path=...` でトップ・固定ページ・記事を出し分ける。
 - `src/app/pages/articles.vue` — 記事一覧（`GET /api/articles`、`?page=N` でページ送り）。`/articles` だけに一致し、`/articles/xxx` などの記事は catch-all ページが表示する。
 - `src/app/components/call-content/` — 呼び出しコンテンツを `call_type`（`short_sentence`/`original_text`/`link_list`/`link`/`archive`/`skill_list`/`tile_list`/`accordion`）ごとに表示する部品。`Block.vue` が振り分ける。タイルリスト（ギャラリー画像）は `components/gallery/Tiles.vue`、開閉パネル（簡易版の Q&A）は FAQ と同じ `components/faq/Item.vue` で表示する。
+- カスタムページ（biscuit で登録した種類ごとのページ。URL は `/カスタム名の複数形/スラッグ`）は `[...slug].vue` が表示する。パス解決 API の `type=custom_page_list` は `components/custom-page/List.vue`（`GET /api/custom-pages/{name}` の一覧）、`type=custom_page` は記事型を記事・固定ページ型を固定ページと同じ部品で表示し、カスタムフォームの項目を `components/custom-page/Fields.vue` で並べる。ナビには `GET /api/custom-page-types` の種類を並べる。呼び出しコンテンツの実データ（キーは `user_make_…`）は `utils/content.ts` の `callContentItems()` が記事・固定ページとしてそろえる。
 - `src/app/pages/gallery.vue` — ギャラリー（`GET /api/gallery-images` を並び順ですべて表示し、`GET /api/gallery-categories` の分類のボタンで絞り込む）。画像をクリックすると名前・コメント付きで拡大表示する。
 - `src/app/components/page/` — 記事・固定ページの本文。
 - ナビ・フッターは `GET /api/call-contents?place=3`（その他）、タイトル・OGP などは `GET /api/site-setting` から取得する。
