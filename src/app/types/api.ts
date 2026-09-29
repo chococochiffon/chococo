@@ -293,3 +293,34 @@ export interface Paginated<T> {
     total: number
   }
 }
+
+// マイページの記事の公開ステータス(下書き・承認待ち・公開)
+export type ArticleApproval = 'draft' | 'pending' | 'published'
+
+// マイページの記事(GET /api/me/articles)。公開側の記事に、編集と承認の状態に使う値を足したもの
+export interface MyArticle {
+  id: number
+  title: string
+  parent_path: string | null
+  slug: string | null
+  path: string
+  content: string | null
+  thumbnail_url: string | null
+  tags?: Tag[]
+  approval: ArticleApproval
+  approval_label: string
+  // 管理者が下書きに戻したときの理由(承認を申請し直すと消える)
+  review_comment: string | null
+  publication_start_datetime: string | null
+  publication_end_datetime: string | null
+  first_published_at: string | null
+  created_at: string | null
+  updated_at: string | null
+}
+
+// 記事の投稿先(biscuit の管理者が登録した親パス。GET /api/me/article-paths)
+export interface ArticlePathOption {
+  id: number
+  label: string
+  parent_path: string
+}
