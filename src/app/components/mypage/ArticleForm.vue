@@ -88,7 +88,8 @@ const previewArticle = computed<Article>(() => ({
   path: previewPath.value,
   content: form.content,
   thumbnail_url: thumbnailPreview.value ?? props.article?.thumbnail_url ?? null,
-  author_name: me.value?.name ?? null,
+  // 公開側と同じく、名前の表示設定に従った名前(非表示なら「投稿者」)
+  author_name: (me.value?.detail ? userDisplayName(me.value.detail) : null) ?? '投稿者',
   tags: form.tags.map((name, index) => ({ id: index, name })),
   published_at: props.article?.first_published_at ?? new Date().toISOString(),
   updated_at: null,

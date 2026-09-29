@@ -14,6 +14,8 @@ export interface Article {
   content: string | null
   thumbnail_url: string | null
   author_name: string | null
+  // 投稿者(管理者の記事は id・profile_path が null。profile_path は投稿者ページを公開しているときだけ)。カスタムページは null
+  author?: ArticleAuthor | null
   // タグを読み込んでいない場合は含まれない
   tags?: Tag[]
   published_at: string | null
@@ -323,4 +325,21 @@ export interface ArticlePathOption {
   id: number
   label: string
   parent_path: string
+}
+
+// 記事の投稿者(名前は投稿者の名前の表示設定に従う)
+export interface ArticleAuthor {
+  id: number | null
+  name: string
+  profile_path: string | null
+}
+
+// 投稿者ページのプロフィール(GET /api/authors/{id})
+export interface Author {
+  id: number
+  name: string
+  profile_path: string
+  user_image_url: string | null
+  comment: string | null
+  skills: UserSkill[]
 }
