@@ -1,6 +1,8 @@
 <script setup lang="ts">
 // パスワードの再設定: メールのリンク(?token=…&email=…)から開き、新しいパスワードを設定する。
 // 設定すると、ほかの端末を含めて発行済みのログインはすべて無効になるため、あらためてログインしてもらう
+definePageMeta({ headerNavigation: false })
+
 const route = useRoute()
 const token = computed(() => (typeof route.query.token === 'string' ? route.query.token : ''))
 const email = computed(() => (typeof route.query.email === 'string' ? route.query.email : ''))
@@ -36,7 +38,7 @@ useSeoMeta({ title: 'パスワードの再設定', robots: 'noindex' })
 </script>
 
 <template>
-  <LayoutSidebarFrame page-type="other" :breadcrumbs="[{ label: 'Home', path: '/' }, { label: 'パスワードの再設定', path: null }]">
+  <LayoutSidebarFrame page-type="other">
     <div class="container">
       <div class="row py-5 justify-content-center">
         <div class="col-md-6 col-lg-5">

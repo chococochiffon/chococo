@@ -1,5 +1,7 @@
 <script setup lang="ts">
 // マイページのログイン。ログインできるのは biscuit の管理画面で登録したユーザーだけ
+definePageMeta({ headerNavigation: false })
+
 const route = useRoute()
 const { me, fetchMe, login } = useMe()
 
@@ -44,7 +46,7 @@ useSeoMeta({ title: 'ログイン', robots: 'noindex' })
 </script>
 
 <template>
-  <LayoutSidebarFrame page-type="other" :breadcrumbs="[{ label: 'Home', path: '/' }, { label: 'ログイン', path: '/login' }]">
+  <LayoutSidebarFrame page-type="other">
     <div class="container">
       <div class="row py-5 justify-content-center">
         <div class="col-md-6 col-lg-5">
