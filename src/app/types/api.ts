@@ -219,6 +219,13 @@ export type SidebarPosition = 'none' | 'left' | 'right'
 
 export type LayoutRegion = 'header' | 'sidebar' | 'footer'
 
+// ナビメニューの項目。path はサイト内のパスか外部の URL。prefix が true なら下の階層のページ(例: /recipes/xxx)でも選択中にする
+export interface NavMenuItem {
+  label: string
+  path: string
+  prefix: boolean
+}
+
 interface LayoutBlockBase {
   // 見出しを持たない部品(サイトタイトルなど)や未設定は null
   title: string | null
@@ -228,7 +235,7 @@ interface LayoutBlockBase {
 // レイアウトの領域に置く部品。サイトタイトル・SNS リンク・コピーライトはサイト設定の値で表示する
 export type LayoutBlock = LayoutBlockBase & (
   | { block_type: 'site_title' | 'social_links' | 'copyright' }
-  | { block_type: 'nav_menu', single_pages: SinglePage[], custom_page_types: CustomPageType[] }
+  | { block_type: 'nav_menu', items: NavMenuItem[] }
   | { block_type: 'free_text', content: string | null }
   // データ種別がなくなっている場合は null
   | { block_type: 'call_content', call_content: CallContent | null }
