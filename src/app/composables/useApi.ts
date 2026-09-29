@@ -4,7 +4,7 @@ import type { GalleryCategory, GalleryImage, Layout, QuestionAnswer, SiteSetting
 /**
  * biscuit の API を useFetch で呼び出す(パスは /api からの相対。例: '/resolve')。
  */
-export function useApi<T>(url: string | (() => string), options?: UseFetchOptions<T>) {
+export function useApi<ResT, DataT = ResT>(url: string | (() => string), options?: UseFetchOptions<ResT, DataT>) {
   return useFetch(url, {
     ...options,
     $fetch: useNuxtApp().$api as typeof $fetch,
@@ -12,58 +12,51 @@ export function useApi<T>(url: string | (() => string), options?: UseFetchOption
 }
 
 /**
- * サイト設定(タイトル・説明・アイコン・サイト画像)を取得する。キーを固定して各所の呼び出しを1回にまとめる。
+ * biscuit の API の { data } の中身を、キーを固定して取得する(各所の呼び出しを 1 回にまとめ、ページを移動しても取得し直さない)。
  */
-export function useSiteSetting() {
-  return useFetch('/site-setting', {
-    key: 'site-setting',
-    $fetch: useNuxtApp().$api as typeof $fetch,
-    transform: (response: { data: SiteSetting }) => response.data,
+function useApiData<T>(key: string, url: string, query?: Record<string, unknown>) {
+  return useApi<{ data: T }, T>(url, {
+    key,
+    query,
+    transform: response => response.data,
   })
 }
 
 /**
+ * サイト設定(タイトル・説明・アイコン・サイト画像)を取得する。
+ */
+export function useSiteSetting() {
+  return useApiData<SiteSetting>('site-setting', '/site-setting')
+}
+
+/**
  * レイアウト(ページの種類ごとのサイドバーの位置と、ヘッダー・サイドバー・フッターに置く部品)を取得する。
- * キーを固定して、ページを移動しても取得し直さない。
  */
 export function useSiteLayout() {
-  return useFetch('/layout', {
-    key: 'layout',
-    $fetch: useNuxtApp().$api as typeof $fetch,
-    transform: (response: { data: Layout }) => response.data,
-  })
+  return useApiData<Layout>('layout', '/layout')
 }
 
 /**
  * Q&A 一覧(登録順)を取得する。topView を指定すると簡易版(true)・分岐あり(false)だけに絞り込む。
  */
 export function useQuestionAnswers(topView?: boolean) {
-  return useFetch('/question-answers', {
-    key: `question-answers:${topView ?? 'all'}`,
-    query: topView === undefined ? {} : { top_view: topView ? 1 : 0 },
-    $fetch: useNuxtApp().$api as typeof $fetch,
-    transform: (response: { data: QuestionAnswer[] }) => response.data,
-  })
+  return useApiData<QuestionAnswer[]>(
+    `question-answers:${topView ?? 'all'}`,
+    '/question-answers',
+    topView === undefined ? {} : { top_view: topView ? 1 : 0 },
+  )
 }
 
 /**
  * ギャラリー画像の一覧(並び順)をすべて取得する。
  */
 export function useGalleryImages() {
-  return useFetch('/gallery-images', {
-    key: 'gallery-images',
-    $fetch: useNuxtApp().$api as typeof $fetch,
-    transform: (response: { data: GalleryImage[] }) => response.data,
-  })
+  return useApiData<GalleryImage[]>('gallery-images', '/gallery-images')
 }
 
 /**
  * ギャラリー画像の分類の一覧(並び順)をすべて取得する。
  */
 export function useGalleryCategories() {
-  return useFetch('/gallery-categories', {
-    key: 'gallery-categories',
-    $fetch: useNuxtApp().$api as typeof $fetch,
-    transform: (response: { data: GalleryCategory[] }) => response.data,
-  })
+  return useApiData<GalleryCategory[]>('gallery-categories', '/gallery-categories')
 }

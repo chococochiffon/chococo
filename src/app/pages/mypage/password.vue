@@ -3,29 +3,17 @@
 definePageMeta({ middleware: 'auth', layout: 'mypage' })
 
 const form = reactive({ current_password: '', password: '', password_confirmation: '' })
-const errors = ref<Record<string, string>>({})
 const status = ref('')
-const saving = ref(false)
+const { errors, submitting: saving, submit: send } = useFormSubmit()
 
 async function submit() {
-  saving.value = true
-  errors.value = {}
   status.value = ''
 
-  try {
+  await send(async () => {
     await $fetch('/api/me/password', { method: 'PUT', body: form })
     Object.assign(form, { current_password: '', password: '', password_confirmation: '' })
     status.value = 'パスワードを変更しました。ほかの端末のログインは無効になりました。'
-  }
-  catch (e) {
-    errors.value = validationErrors(e)
-    if (Object.keys(errors.value).length === 0) {
-      errors.value = { _: errorMessage(e) }
-    }
-  }
-  finally {
-    saving.value = false
-  }
+  })
 }
 
 useSeoMeta({ title: 'パスワードの変更', robots: 'noindex' })

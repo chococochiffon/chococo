@@ -16,8 +16,7 @@ if (error.value || !article.value) {
 }
 
 const status = ref('')
-const actionError = ref('')
-const working = ref(false)
+const { errors: actionErrors, submitting: working, submit } = useFormSubmit({ fieldErrors: false })
 // 保存のたびにフォームを保存後の記事で作り直す(ボタン・サムネイル画像などを最新にする)
 const formKey = ref(0)
 
@@ -25,7 +24,7 @@ function onSaved(saved: MyArticle, message: string) {
   article.value = saved
   formKey.value++
   status.value = message
-  actionError.value = ''
+  actionErrors.value = {}
 }
 
 async function withdraw() {
@@ -33,18 +32,9 @@ async function withdraw() {
     return
   }
 
-  working.value = true
-  actionError.value = ''
-
-  try {
+  await submit(async () => {
     onSaved((await $fetch<{ data: MyArticle }>(`/api/me/articles/${article.value!.id}/withdraw`, { method: 'POST' })).data, '承認の申請を取り下げました。')
-  }
-  catch (e) {
-    actionError.value = errorMessage(e)
-  }
-  finally {
-    working.value = false
-  }
+  })
 }
 
 async function destroy() {
@@ -54,18 +44,11 @@ async function destroy() {
     return
   }
 
-  working.value = true
-  actionError.value = ''
-
-  try {
+  await submit(async () => {
     await $fetch(`/api/me/articles/${article.value!.id}`, { method: 'DELETE' })
     flash.value = '記事を削除しました。'
     await navigateTo('/mypage/articles')
-  }
-  catch (e) {
-    actionError.value = errorMessage(e)
-    working.value = false
-  }
+  })
 }
 
 useSeoMeta({ title: '記事の編集', robots: 'noindex' })
@@ -88,7 +71,7 @@ useSeoMeta({ title: '記事の編集', robots: 'noindex' })
     </div>
 
     <div v-if="status" class="alert alert-success small" role="status">{{ status }}</div>
-    <div v-if="actionError" class="alert alert-danger small" role="alert">{{ actionError }}</div>
+    <div v-if="actionErrors._" class="alert alert-danger small" role="alert">{{ actionErrors._ }}</div>
     <div v-if="article.review_comment" class="alert alert-warning small" role="alert">
       <div class="fw-bold mb-1"><i class="bi bi-exclamation-circle me-1" />管理者から差し戻されました</div>
       <div style="white-space: pre-wrap;">{{ article.review_comment }}</div>

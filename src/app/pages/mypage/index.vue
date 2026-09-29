@@ -33,9 +33,8 @@ const form = reactive({
   skills: (me.value?.detail?.skills ?? []).map(skill => ({ id: skill.id, name: skill.name, level: skill.level })) as SkillRow[],
 })
 
-const errors = ref<Record<string, string>>({})
 const status = ref('')
-const saving = ref(false)
+const { errors, submitting: saving, submit } = useFormSubmit()
 
 function addSkill() {
   form.skills.push({ id: null, name: '', level: 1 })
@@ -46,11 +45,9 @@ function removeSkill(index: number) {
 }
 
 async function saveProfile() {
-  saving.value = true
-  errors.value = {}
   status.value = ''
 
-  try {
+  await submit(async () => {
     const response = await $fetch<{ data: typeof me.value }>('/api/me/profile', {
       method: 'PUT',
       body: {
@@ -72,22 +69,11 @@ async function saveProfile() {
     me.value = response.data
     form.skills = (response.data?.detail?.skills ?? []).map(skill => ({ id: skill.id, name: skill.name, level: skill.level }))
     status.value = 'プロフィールを保存しました。'
-  }
-  catch (e) {
-    errors.value = validationErrors(e)
-    status.value = ''
-    if (Object.keys(errors.value).length === 0) {
-      errors.value = { _: errorMessage(e) }
-    }
-  }
-  finally {
-    saving.value = false
-  }
+  })
 }
 
 // アイコン画像は選んだらすぐに保存する(biscuit が中央で正方形に切り抜く)
-const imageError = ref('')
-const uploading = ref(false)
+const { errors: imageErrors, submitting: uploading, submit: submitImage } = useFormSubmit({ fieldErrors: false, fallbackMessage: '画像の保存に失敗しました。' })
 
 async function uploadImage(event: Event) {
   const file = (event.target as HTMLInputElement).files?.[0]
@@ -96,22 +82,13 @@ async function uploadImage(event: Event) {
     return
   }
 
-  uploading.value = true
-  imageError.value = ''
-
-  try {
+  await submitImage(async () => {
     const body = new FormData()
     body.append('image', file)
     const response = await $fetch<{ data: typeof me.value }>('/api/me/profile/image', { method: 'POST', body })
     me.value = response.data
-  }
-  catch (e) {
-    imageError.value = errorMessage(e, '画像の保存に失敗しました。')
-  }
-  finally {
-    uploading.value = false
-    ;(event.target as HTMLInputElement).value = ''
-  }
+  })
+  ;(event.target as HTMLInputElement).value = ''
 }
 
 useSeoMeta({ title: 'マイページ', robots: 'noindex' })
@@ -135,7 +112,7 @@ useSeoMeta({ title: 'マイページ', robots: 'noindex' })
             <img v-if="me?.detail" :src="me.detail.user_image_url" alt="" class="rounded-circle border mb-3" width="128" height="128">
             <input type="file" accept="image/*" class="form-control form-control-sm" aria-label="アイコン画像を選択" :disabled="uploading || !me?.detail" @change="uploadImage">
             <div class="form-text">画像は中央を正方形に切り抜いて保存します。</div>
-            <div v-if="imageError" class="text-danger small mt-1">{{ imageError }}</div>
+            <div v-if="imageErrors._" class="text-danger small mt-1">{{ imageErrors._ }}</div>
           </div>
         </div>
       </div>

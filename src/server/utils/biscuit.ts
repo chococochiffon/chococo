@@ -89,8 +89,16 @@ export async function proxyToBiscuit(event: H3Event, path: string): Promise<stri
 }
 
 /**
+ * biscuit の API のエラー(入力エラー(422)・回数制限(429)など)を、ステータスと biscuit の応答(data)のままブラウザへ返すエラーにする。
+ * 画面側は utils/errors.ts の validationErrors()・errorMessage() で data から取り出す。
+ */
+export function relayBiscuitError(error: FetchError): never {
+  throw createError({ statusCode: error.statusCode ?? 500, statusMessage: error.statusMessage, data: error.data })
+}
+
+/**
  * ログイン前の操作(パスワード再設定など)を、トークンなしで biscuit へ中継する。
- * 本文は受け付ける項目だけを渡し、入力エラー(422)・回数制限(429)などは biscuit の応答を data に入れて返す(ログインと同じ)。
+ * 本文は受け付ける項目だけを渡し、エラーは relayBiscuitError() で biscuit の応答のまま返す(ログインと同じ)。
  */
 export async function postToBiscuitAsGuest<T>(event: H3Event, path: string, fields: string[]): Promise<T | null> {
   assertSameOrigin(event)
@@ -100,9 +108,7 @@ export async function postToBiscuitAsGuest<T>(event: H3Event, path: string, fiel
     method: 'POST',
     headers: { Accept: 'application/json' },
     body: Object.fromEntries(fields.map(field => [field, body?.[field]])),
-  }).catch((error: FetchError) => {
-    throw createError({ statusCode: error.statusCode ?? 500, statusMessage: error.statusMessage, data: error.data })
-  })
+  }).catch(relayBiscuitError)
 
   setResponseStatus(event, response.status)
 
