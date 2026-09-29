@@ -130,6 +130,7 @@ useSeoMeta({ title: 'マイページ', robots: 'noindex' })
           <SectionHeading title="My Page" subtitle="マイページ" />
 
           <div class="d-flex justify-content-end gap-3 mb-3 small">
+            <NuxtLink to="/mypage/articles">記事の管理</NuxtLink>
             <NuxtLink to="/mypage/password">パスワードの変更</NuxtLink>
             <button type="button" class="btn btn-link btn-sm p-0" @click="onLogout">ログアウト</button>
           </div>
