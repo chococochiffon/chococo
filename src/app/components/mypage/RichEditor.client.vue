@@ -23,6 +23,9 @@ onMounted(async () => {
 
   quill = new QuillEditor(container.value!, {
     theme: 'snow',
+    // 扱う書式をツールバーのもの(とリストの字下げ)に絞る。貼り付けた HTML からも、ほかの書式の埋め込みは作らない
+    // (Quill 2.0.3 の数式・動画の埋め込みには、HTML の書き出しでエスケープされない脆弱性 CVE-2025-15056 がある)
+    formats: ['header', 'bold', 'italic', 'underline', 'strike', 'list', 'indent', 'link', 'image'],
     modules: {
       toolbar: {
         container: [
