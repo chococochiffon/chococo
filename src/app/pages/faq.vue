@@ -22,7 +22,7 @@ useSeoMeta({
 </script>
 
 <template>
-  <LayoutSidebarFrame page-type="other">
+  <LayoutSidebarFrame page-type="other" :breadcrumbs="[{ label: 'Home', path: '/' }, { label: 'FAQ', path: '/faq' }]">
     <div class="container">
       <div class="row py-5">
         <SectionHeading title="FAQs" subtitle="聞いてみたいこと" />
