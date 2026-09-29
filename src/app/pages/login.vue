@@ -60,6 +60,9 @@ useSeoMeta({ title: 'ログイン', robots: 'noindex' })
               <input id="login-password" v-model="password" type="password" class="form-control" autocomplete="current-password" required>
             </div>
             <button type="submit" class="btn btn-primary w-100" :disabled="submitting">ログイン</button>
+            <div class="text-center small mt-3">
+              <NuxtLink to="/forgot-password">パスワードを忘れた方</NuxtLink>
+            </div>
           </form>
         </div>
       </div>

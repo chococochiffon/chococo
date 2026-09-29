@@ -1,3 +1,4 @@
+import type { FetchError } from 'ofetch'
 import type { H3Event } from 'h3'
 
 // マイページのログインで biscuit が発行した API トークンを入れる Cookie の名前。
@@ -85,4 +86,25 @@ export async function proxyToBiscuit(event: H3Event, path: string): Promise<stri
   setResponseHeader(event, 'content-type', response.headers.get('content-type') ?? 'application/json')
 
   return response.status === 204 ? null : await response.text()
+}
+
+/**
+ * ログイン前の操作(パスワード再設定など)を、トークンなしで biscuit へ中継する。
+ * 本文は受け付ける項目だけを渡し、入力エラー(422)・回数制限(429)などは biscuit の応答を data に入れて返す(ログインと同じ)。
+ */
+export async function postToBiscuitAsGuest<T>(event: H3Event, path: string, fields: string[]): Promise<T | null> {
+  assertSameOrigin(event)
+
+  const body = await readBody<Record<string, unknown>>(event)
+  const response = await $fetch.raw<T>(`${biscuitApiBase()}${path}`, {
+    method: 'POST',
+    headers: { Accept: 'application/json' },
+    body: Object.fromEntries(fields.map(field => [field, body?.[field]])),
+  }).catch((error: FetchError) => {
+    throw createError({ statusCode: error.statusCode ?? 500, statusMessage: error.statusMessage, data: error.data })
+  })
+
+  setResponseStatus(event, response.status)
+
+  return (response._data as T | undefined) ?? null
 }
