@@ -105,6 +105,24 @@ export function formatDate(iso: string | null): string {
 }
 
 /**
+ * ISO 8601 の日時を「YYYY/MM/DD HH:mm」(日本時間)に整形する(マイページの一覧など、管理画面と同じ表記)。
+ */
+export function formatDateTime(iso: string | null): string {
+  if (!iso) {
+    return ''
+  }
+
+  return new Date(iso).toLocaleString('ja-JP', {
+    timeZone: 'Asia/Tokyo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+}
+
+/**
  * HTML(本文リッチテキスト)からタグを除いて先頭 length 文字の抜粋を作る(description 用)。
  */
 export function excerpt(html: string | null, length = 120): string {

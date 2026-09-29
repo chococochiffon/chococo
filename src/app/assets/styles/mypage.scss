@@ -1,0 +1,215 @@
+// マイページ(ログイン中の画面。layouts/mypage.vue)のスタイル。biscuit のシステム管理画面(resources/css/admin.css)のデザインを踏襲する。
+// 公開側のページに影響しないよう、すべて .mypage-shell の中だけに効かせる
+.mypage-shell {
+  --mypage-primary: #334155;
+  --mypage-primary-dark: #1e293b;
+  --mypage-text: #0d0116;
+  --mypage-shadow: 0 0.15rem 1.75rem rgba(13, 1, 22, 0.1);
+  --bs-body-color: var(--mypage-text);
+  --bs-primary: var(--mypage-primary);
+  --bs-primary-rgb: 51, 65, 85;
+  --bs-link-color: var(--mypage-primary);
+  --bs-link-color-rgb: 51, 65, 85;
+  --bs-link-hover-color: var(--mypage-primary-dark);
+  --bs-link-hover-color-rgb: 30, 41, 59;
+
+  min-height: 100vh;
+  // 管理画面と同じ Nunito。日本語はシステムの日本語フォント、なければ公開側で読み込んでいる Zen Maru Gothic で表示する
+  font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Hiragino Sans', 'Yu Gothic UI', Meiryo, 'Zen Maru Gothic', sans-serif;
+  color: var(--mypage-text);
+  background-color: #f8f9fa;
+
+  // SB Admin 2 風のサイドバー
+  .mypage-sidebar {
+    width: 224px;
+    min-height: 100vh;
+    background-image: linear-gradient(180deg, #334155 10%, #1e293b 100%);
+  }
+
+  .mypage-sidebar-brand {
+    display: block;
+    padding: 1.5rem 1rem;
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.05rem;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  .mypage-sidebar-divider {
+    margin: 0 1rem 1rem;
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    opacity: 1;
+  }
+
+  .mypage-sidebar-heading {
+    padding: 0 1.5rem 0.5rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.05rem;
+  }
+
+  .mypage-sidebar-nav {
+    padding: 0 0.75rem;
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.85);
+      font-weight: 700;
+      font-size: 0.85rem;
+      border-radius: 0.5rem;
+      padding: 0.65rem 0.75rem;
+      margin-bottom: 0.15rem;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: #fff;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-link i {
+      width: 1.25rem;
+      margin-right: 0.6rem;
+      text-align: center;
+      font-size: 1rem;
+    }
+  }
+
+  .mypage-topbar {
+    box-shadow: var(--mypage-shadow);
+  }
+
+  // スマートフォンでは、サイドバーをトップバーのボタンで開閉する
+  @media (max-width: 767.98px) {
+    .mypage-sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 1045;
+      transform: translateX(-100%);
+      transition: transform 0.2s ease;
+    }
+
+    .mypage-sidebar.is-open {
+      transform: none;
+    }
+
+    .mypage-sidebar-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 1040;
+      background-color: rgba(13, 1, 22, 0.4);
+    }
+  }
+
+  .btn-primary {
+    --bs-btn-bg: #334155;
+    --bs-btn-border-color: #334155;
+    --bs-btn-hover-bg: #1e293b;
+    --bs-btn-hover-border-color: #1e293b;
+    --bs-btn-active-bg: #1e293b;
+    --bs-btn-active-border-color: #1e293b;
+    --bs-btn-disabled-bg: #334155;
+    --bs-btn-disabled-border-color: #334155;
+    --bs-btn-focus-shadow-rgb: 51, 65, 85;
+  }
+
+  .btn-outline-primary {
+    --bs-btn-color: #334155;
+    --bs-btn-border-color: #334155;
+    --bs-btn-hover-bg: #334155;
+    --bs-btn-hover-border-color: #334155;
+    --bs-btn-active-bg: #334155;
+    --bs-btn-active-border-color: #334155;
+    --bs-btn-focus-shadow-rgb: 51, 65, 85;
+  }
+
+  .nav-pills {
+    --bs-nav-pills-link-active-bg: #334155;
+  }
+
+  .page-link {
+    color: #334155;
+  }
+
+  .page-item.active .page-link {
+    background-color: #334155;
+    border-color: #334155;
+    color: #fff;
+  }
+
+  .form-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--mypage-text);
+  }
+
+  // 必須項目のラベルに赤い * を付ける(対応する入力欄に required があれば自動で付く。付けられない項目はラベルに is-required)
+  label.form-label:has(+ input[required], + select[required], + textarea[required])::after,
+  .form-label.is-required::after {
+    content: "*";
+    color: #dc2626;
+    margin-left: 0.25rem;
+  }
+
+  .form-control,
+  .form-select {
+    border-radius: 0.5rem;
+    padding: 0.55rem 0.85rem;
+    border-color: #cbd5e1;
+  }
+
+  .form-select {
+    padding-right: 2.25rem;
+  }
+
+  .form-control-sm {
+    padding: 0.25rem 0.5rem;
+  }
+
+  .form-select-sm {
+    padding: 0.25rem 2.25rem 0.25rem 0.5rem;
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: #334155;
+    box-shadow: 0 0 0 0.2rem rgba(51, 65, 85, 0.2);
+  }
+
+  .form-check-input:checked {
+    background-color: #334155;
+    border-color: #334155;
+  }
+
+  .form-check-input:focus {
+    border-color: #334155;
+    box-shadow: 0 0 0 0.2rem rgba(51, 65, 85, 0.2);
+  }
+
+  .card {
+    border-color: #e2e8f0;
+    border-radius: 0.75rem;
+    box-shadow: var(--mypage-shadow);
+  }
+
+  // 一覧のホバー行(既定の薄い灰色は背景と見分けにくいため、淡い青にする)
+  .table-hover {
+    --bs-table-hover-bg: #dbeafe;
+    --bs-table-hover-color: var(--mypage-text);
+  }
+
+  // カードの中の一覧テーブルは、カードの角丸に合わせて最後の行の下線を消す
+  .card > .table-responsive > .table,
+  .card > .table {
+    margin-bottom: 0;
+
+    > tbody > tr:last-child > * {
+      border-bottom: 0;
+    }
+  }
+}

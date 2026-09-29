@@ -159,65 +159,74 @@ function savedMessage(article: MyArticle): string {
       </div>
     </div>
 
-    <div v-if="previewing" class="card shadow-sm">
+    <div v-if="previewing" class="card">
       <PageArticleBody :article="previewArticle" />
     </div>
 
-    <form v-show="!previewing" class="card card-body shadow-sm" novalidate @submit.prevent="save(false)">
+    <!-- 管理画面の記事フォームと同じく、左: タイトル・本文・送信ボタン / 右: それ以外の設定項目 -->
+    <form v-show="!previewing" novalidate @submit.prevent="save(false)">
       <div v-if="errors._" class="alert alert-danger small" role="alert">{{ errors._ }}</div>
 
-      <div class="row g-3">
-        <div class="col-12">
-          <label for="my-article-title" class="form-label">タイトル</label>
-          <input id="my-article-title" v-model="form.title" type="text" class="form-control" :class="{ 'is-invalid': errors.title }" maxlength="255" required>
-          <div class="invalid-feedback">{{ errors.title }}</div>
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div class="card card-body p-4">
+            <div class="mb-3">
+              <label for="my-article-title" class="form-label">タイトル</label>
+              <input id="my-article-title" v-model="form.title" type="text" class="form-control" :class="{ 'is-invalid': errors.title }" maxlength="255" required>
+              <div class="invalid-feedback">{{ errors.title }}</div>
+            </div>
+
+            <div class="mb-3">
+              <div class="form-label is-required">本文</div>
+              <MypageRichEditor v-model="form.content" :invalid="!!errors.content" @upload-error="message => errors = { ...errors, _: message }" />
+              <div v-if="errors.content" class="invalid-feedback d-block">{{ errors.content }}</div>
+            </div>
+
+            <div class="d-flex flex-wrap align-items-center gap-2">
+              <template v-if="approval === 'draft'">
+                <button type="submit" class="btn btn-outline-primary" :disabled="saving">下書き保存</button>
+                <button type="button" class="btn btn-primary" :disabled="saving" @click="save(true)">保存して承認を申請</button>
+              </template>
+              <button v-else-if="approval === 'pending'" type="submit" class="btn btn-primary" :disabled="saving">保存する</button>
+              <button v-else type="submit" class="btn btn-primary" :disabled="saving">保存して承認を申請し直す</button>
+              <NuxtLink to="/mypage/articles" class="text-secondary ms-2">キャンセル</NuxtLink>
+            </div>
+          </div>
         </div>
 
-        <div class="col-md-6">
-          <label for="my-article-path" class="form-label">投稿先</label>
-          <select id="my-article-path" v-model.number="form.pathOptionId" class="form-select" :class="{ 'is-invalid': errors.article_path_option_id }">
-            <option v-if="keepsCurrentPath" :value="KEEP_PATH">今のまま(/{{ article?.parent_path }}/)</option>
-            <option v-for="option in pathOptions ?? []" :key="option.id" :value="option.id">{{ option.label }}(/{{ option.parent_path }}/)</option>
-          </select>
-          <div class="invalid-feedback">{{ errors.article_path_option_id }}</div>
-          <div v-if="!keepsCurrentPath && !pathOptions?.length" class="form-text text-danger">投稿先が登録されていません。管理者にお問い合わせください。</div>
-        </div>
+        <div class="col-lg-4">
+          <div class="card card-body p-4">
+            <div class="mb-3">
+              <label for="my-article-path" class="form-label is-required">投稿先</label>
+              <select id="my-article-path" v-model.number="form.pathOptionId" class="form-select" :class="{ 'is-invalid': errors.article_path_option_id }">
+                <option v-if="keepsCurrentPath" :value="KEEP_PATH">今のまま(/{{ article?.parent_path }}/)</option>
+                <option v-for="option in pathOptions ?? []" :key="option.id" :value="option.id">{{ option.label }}(/{{ option.parent_path }}/)</option>
+              </select>
+              <div class="invalid-feedback">{{ errors.article_path_option_id }}</div>
+              <div v-if="!keepsCurrentPath && !pathOptions?.length" class="form-text text-danger">投稿先が登録されていません。管理者にお問い合わせください。</div>
+            </div>
 
-        <div class="col-md-6">
-          <label for="my-article-slug" class="form-label">スラッグ(任意)</label>
-          <input id="my-article-slug" v-model="form.slug" type="text" class="form-control" :class="{ 'is-invalid': errors.slug }" placeholder="例: my-first-post" autocomplete="off">
-          <div class="invalid-feedback">{{ errors.slug }}</div>
-          <div class="form-text">半角英小文字・数字・ハイフン。URL: <code>{{ previewPath }}</code></div>
-        </div>
+            <div class="mb-3">
+              <label for="my-article-slug" class="form-label">スラッグ</label>
+              <input id="my-article-slug" v-model="form.slug" type="text" class="form-control" :class="{ 'is-invalid': errors.slug }" placeholder="例: my-first-post" autocomplete="off">
+              <div class="invalid-feedback">{{ errors.slug }}</div>
+              <div class="form-text">半角英小文字・数字・ハイフン。未入力なら記事番号。<br>URL: <code>{{ previewPath }}</code></div>
+            </div>
 
-        <div class="col-12">
-          <div class="form-label">本文</div>
-          <MypageRichEditor v-model="form.content" :invalid="!!errors.content" @upload-error="message => errors = { ...errors, _: message }" />
-          <div v-if="errors.content" class="invalid-feedback d-block">{{ errors.content }}</div>
-        </div>
+            <div class="mb-3">
+              <label for="my-article-thumbnail" class="form-label">サムネイル画像</label>
+              <img v-if="thumbnailPreview || article?.thumbnail_url" :src="thumbnailPreview ?? article?.thumbnail_url ?? ''" alt="" class="img-fluid rounded border d-block mb-2">
+              <input id="my-article-thumbnail" ref="thumbnailInput" type="file" accept="image/*" class="form-control form-control-sm" :class="{ 'is-invalid': errors.thumbnail }" @change="selectThumbnail">
+              <div class="invalid-feedback">{{ errors.thumbnail }}</div>
+              <div class="form-text">1200×630px または 1280×720px のうち、比率が近い方へ中央を切り抜いて縮小します。</div>
+            </div>
 
-        <div class="col-md-6">
-          <label for="my-article-thumbnail" class="form-label">サムネイル画像</label>
-          <img v-if="thumbnailPreview || article?.thumbnail_url" :src="thumbnailPreview ?? article?.thumbnail_url ?? ''" alt="" class="img-fluid rounded border d-block mb-2" style="max-height: 160px;">
-          <input id="my-article-thumbnail" ref="thumbnailInput" type="file" accept="image/*" class="form-control form-control-sm" :class="{ 'is-invalid': errors.thumbnail }" @change="selectThumbnail">
-          <div class="invalid-feedback">{{ errors.thumbnail }}</div>
-          <div class="form-text">1200×630px または 1280×720px のうち、比率が近い方へ中央を切り抜いて縮小します。</div>
+            <div>
+              <label for="my-article-tags" class="form-label">タグ</label>
+              <MypageTagInput v-model="form.tags" />
+            </div>
+          </div>
         </div>
-
-        <div class="col-md-6">
-          <label for="my-article-tags" class="form-label">タグ</label>
-          <MypageTagInput v-model="form.tags" />
-        </div>
-      </div>
-
-      <div class="d-flex flex-wrap gap-2 mt-4">
-        <template v-if="approval === 'draft'">
-          <button type="submit" class="btn btn-outline-primary" :disabled="saving">下書き保存</button>
-          <button type="button" class="btn btn-primary" :disabled="saving" @click="save(true)">保存して承認を申請</button>
-        </template>
-        <button v-else-if="approval === 'pending'" type="submit" class="btn btn-primary" :disabled="saving">保存する</button>
-        <button v-else type="submit" class="btn btn-primary" :disabled="saving">保存して承認を申請し直す</button>
-        <NuxtLink to="/mypage/articles" class="btn btn-link">一覧へ戻る</NuxtLink>
       </div>
     </form>
   </div>
