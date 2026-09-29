@@ -8,30 +8,16 @@ const token = computed(() => (typeof route.query.token === 'string' ? route.quer
 const email = computed(() => (typeof route.query.email === 'string' ? route.query.email : ''))
 
 const form = reactive({ password: '', password_confirmation: '' })
-const errors = ref<Record<string, string>>({})
 const completed = ref(false)
-const submitting = ref(false)
+// リンクが無効・期限切れのとき(email・token のエラー)は、全体のエラーとして出す
+const { errors, submitting, submit: send } = useFormSubmit({ generalErrorFields: ['email', 'token'] })
 
 async function submit() {
-  submitting.value = true
-  errors.value = {}
-
-  try {
+  await send(async () => {
     await $fetch('/api/auth/reset-password', { method: 'POST', body: { token: token.value, email: email.value, ...form } })
     completed.value = true
     useMe().me.value = null
-  }
-  catch (e) {
-    errors.value = validationErrors(e)
-    // リンクが無効・期限切れのとき(email・token のエラー)は、全体のエラーとして出す
-    const linkError = errors.value.email ?? errors.value.token
-    if (linkError || Object.keys(errors.value).length === 0) {
-      errors.value = { ...errors.value, _: linkError ?? errorMessage(e) }
-    }
-  }
-  finally {
-    submitting.value = false
-  }
+  })
 }
 
 useSeoMeta({ title: 'パスワードの再設定', robots: 'noindex' })

@@ -7,10 +7,10 @@ const route = useRoute()
 const authorId = computed(() => Number(route.params.id))
 const page = computed(() => Math.max(Number(route.query.page) || 1, 1))
 
-const { data: authorResponse, error } = await useApi<{ data: Author }>(() => `/authors/${authorId.value}`, {
+const { data: author, error } = await useApi<{ data: Author }, Author>(() => `/authors/${authorId.value}`, {
   key: () => `author:${authorId.value}`,
+  transform: response => response.data,
 })
-const author = computed(() => authorResponse.value?.data)
 
 if (error.value || !author.value) {
   throw createError({ statusCode: error.value?.statusCode ?? 404, statusMessage: 'Page Not Found', fatal: true })

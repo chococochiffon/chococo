@@ -4,31 +4,17 @@ definePageMeta({ headerNavigation: false })
 
 const email = ref('')
 const status = ref('')
-const errors = ref<Record<string, string>>({})
-const submitting = ref(false)
+const { errors, submitting, submit: send } = useFormSubmit({
+  tooManyRequestsMessage: '送信の回数が多すぎます。しばらくしてからもう一度お試しください。',
+})
 
 async function submit() {
-  submitting.value = true
   status.value = ''
-  errors.value = {}
 
-  try {
+  await send(async () => {
     const response = await $fetch<{ message: string }>('/api/auth/forgot-password', { method: 'POST', body: { email: email.value } })
     status.value = response.message
-  }
-  catch (e) {
-    errors.value = validationErrors(e)
-    if (Object.keys(errors.value).length === 0) {
-      errors.value = {
-        _: (e as { statusCode?: number }).statusCode === 429
-          ? '送信の回数が多すぎます。しばらくしてからもう一度お試しください。'
-          : errorMessage(e),
-      }
-    }
-  }
-  finally {
-    submitting.value = false
-  }
+  })
 }
 
 useSeoMeta({ title: 'パスワードの再設定', robots: 'noindex' })

@@ -21,25 +21,17 @@ if (me.value) {
 
 const email = ref('')
 const password = ref('')
-const error = ref('')
-const submitting = ref(false)
+const { errors, submitting, submit: send } = useFormSubmit({
+  fieldErrors: false,
+  tooManyRequestsMessage: 'ログインの試行回数が多すぎます。しばらくしてからもう一度お試しください。',
+  fallbackMessage: 'ログインに失敗しました。',
+})
 
 async function submit() {
-  submitting.value = true
-  error.value = ''
-
-  try {
+  await send(async () => {
     await login(email.value, password.value)
     await navigateTo(redirectTo.value)
-  }
-  catch (e) {
-    error.value = (e as { statusCode?: number }).statusCode === 429
-      ? 'ログインの試行回数が多すぎます。しばらくしてからもう一度お試しください。'
-      : errorMessage(e, 'ログインに失敗しました。')
-  }
-  finally {
-    submitting.value = false
-  }
+  })
 }
 
 useSeoMeta({ title: 'ログイン', robots: 'noindex' })
@@ -52,7 +44,7 @@ useSeoMeta({ title: 'ログイン', robots: 'noindex' })
         <div class="col-md-6 col-lg-5">
           <SectionHeading title="Login" subtitle="ログイン" />
           <form class="card card-body shadow-sm" novalidate @submit.prevent="submit">
-            <div v-if="error" class="alert alert-danger small" role="alert">{{ error }}</div>
+            <div v-if="errors._" class="alert alert-danger small" role="alert">{{ errors._ }}</div>
             <div class="mb-3">
               <label for="login-email" class="form-label">メールアドレス</label>
               <input id="login-email" v-model="email" type="email" class="form-control" autocomplete="username" required>

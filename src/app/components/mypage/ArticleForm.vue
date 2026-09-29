@@ -32,8 +32,8 @@ const form = reactive({
 const thumbnail = ref<File | null>(null)
 const thumbnailPreview = ref<string | null>(null)
 const thumbnailInput = ref<HTMLInputElement>()
-const errors = ref<Record<string, string>>({})
-const saving = ref(false)
+// 申請(approval)の入力エラー(下書きでないなど)は項目の欄がないため、フォームの上にまとめて出す
+const { errors, submitting: saving, submit } = useFormSubmit({ generalErrorFields: ['approval'] })
 const previewing = ref(false)
 
 // 今の親パスが投稿先にあればその投稿先、なければ「今のまま」(新規作成なら最初の投稿先)
@@ -100,10 +100,7 @@ async function save(submitAfterSave: boolean) {
     return
   }
 
-  saving.value = true
-  errors.value = {}
-
-  try {
+  await submit(async () => {
     const body = {
       title: form.title,
       content: form.content,
@@ -128,16 +125,12 @@ async function save(submitAfterSave: boolean) {
     }
 
     emit('saved', article, savedMessage(article))
-  }
-  catch (e) {
-    errors.value = validationErrors(e)
-    if (Object.keys(errors.value).length === 0 || errors.value.approval) {
-      errors.value = { ...errors.value, _: errorMessage(e) }
-    }
-  }
-  finally {
-    saving.value = false
-  }
+  })
+}
+
+// 本文の画像のアップロードに失敗したときは、フォームの上にまとめて出す
+function showUploadError(message: string) {
+  errors.value = { ...errors.value, _: message }
 }
 
 function savedMessage(article: MyArticle): string {
@@ -179,7 +172,7 @@ function savedMessage(article: MyArticle): string {
 
             <div class="mb-3">
               <div class="form-label is-required">本文</div>
-              <MypageRichEditor v-model="form.content" :invalid="!!errors.content" @upload-error="message => errors = { ...errors, _: message }" />
+              <MypageRichEditor v-model="form.content" :invalid="!!errors.content" @upload-error="showUploadError" />
               <div v-if="errors.content" class="invalid-feedback d-block">{{ errors.content }}</div>
             </div>
 
