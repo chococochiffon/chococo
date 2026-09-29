@@ -2,7 +2,7 @@
 import type { MyArticle } from '~/types/api'
 
 // マイページ: 記事の編集・承認の申請の取り下げ・削除
-definePageMeta({ middleware: 'auth' })
+definePageMeta({ middleware: 'auth', layout: 'mypage' })
 
 const route = useRoute()
 const flash = useState<string>('my-articles-flash', () => '')
@@ -72,43 +72,31 @@ useSeoMeta({ title: '記事の編集', robots: 'noindex' })
 </script>
 
 <template>
-  <LayoutSidebarFrame
-    page-type="other"
-    :breadcrumbs="[
-      { label: 'Home', path: '/' },
-      { label: 'マイページ', path: '/mypage' },
-      { label: '記事の管理', path: '/mypage/articles' },
-      { label: '記事の編集', path: route.path },
-    ]"
-  >
-    <div v-if="article" class="container">
-      <div class="row py-5 justify-content-center">
-        <div class="col-lg-10">
-          <SectionHeading title="Edit Article" subtitle="記事の編集" />
+  <div v-if="article">
+    <div class="mb-4 d-flex align-items-center justify-content-between">
+      <h1 class="h5 mb-0">記事の編集</h1>
+    </div>
 
-          <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
-            <MypageApprovalBadge :approval="article.approval" />
-            <span v-if="article.approval === 'pending'" class="small text-body-secondary">管理者の承認を待っています。</span>
-            <NuxtLink v-if="article.approval === 'published'" :to="article.path" class="small">公開中のページを見る</NuxtLink>
-            <div class="ms-auto d-flex gap-2">
-              <button v-if="article.approval === 'pending'" type="button" class="btn btn-outline-secondary btn-sm" :disabled="working" @click="withdraw">申請を取り下げる</button>
-              <button type="button" class="btn btn-outline-danger btn-sm" :disabled="working" @click="destroy">削除</button>
-            </div>
-          </div>
-
-          <div v-if="status" class="alert alert-success small" role="status">{{ status }}</div>
-          <div v-if="actionError" class="alert alert-danger small" role="alert">{{ actionError }}</div>
-          <div v-if="article.review_comment" class="alert alert-warning small" role="alert">
-            <div class="fw-bold mb-1"><i class="bi bi-exclamation-circle me-1" />管理者から差し戻されました</div>
-            <div style="white-space: pre-wrap;">{{ article.review_comment }}</div>
-          </div>
-          <div v-if="article.approval === 'published'" class="alert alert-info small">
-            公開中の記事です。保存すると承認待ちに戻り、管理者が承認するまで公開側には表示されません。
-          </div>
-
-          <MypageArticleForm :key="formKey" :article="article" @saved="onSaved" />
-        </div>
+    <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+      <MypageApprovalBadge :approval="article.approval" />
+      <span v-if="article.approval === 'pending'" class="small text-body-secondary">管理者の承認を待っています。</span>
+      <NuxtLink v-if="article.approval === 'published'" :to="article.path" class="small">公開中のページを見る</NuxtLink>
+      <div class="ms-auto d-flex gap-2">
+        <button v-if="article.approval === 'pending'" type="button" class="btn btn-outline-secondary btn-sm" :disabled="working" @click="withdraw">申請を取り下げる</button>
+        <button type="button" class="btn btn-outline-danger btn-sm" :disabled="working" @click="destroy">削除</button>
       </div>
     </div>
-  </LayoutSidebarFrame>
+
+    <div v-if="status" class="alert alert-success small" role="status">{{ status }}</div>
+    <div v-if="actionError" class="alert alert-danger small" role="alert">{{ actionError }}</div>
+    <div v-if="article.review_comment" class="alert alert-warning small" role="alert">
+      <div class="fw-bold mb-1"><i class="bi bi-exclamation-circle me-1" />管理者から差し戻されました</div>
+      <div style="white-space: pre-wrap;">{{ article.review_comment }}</div>
+    </div>
+    <div v-if="article.approval === 'published'" class="alert alert-info small">
+      公開中の記事です。保存すると承認待ちに戻り、管理者が承認するまで公開側には表示されません。
+    </div>
+
+    <MypageArticleForm :key="formKey" :article="article" @saved="onSaved" />
+  </div>
 </template>

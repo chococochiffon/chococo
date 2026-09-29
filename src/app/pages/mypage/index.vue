@@ -2,9 +2,9 @@
 import { MAX_SKILL_LEVEL, type NameSetting } from '~/types/api'
 
 // マイページ: プロフィール(名前・メールアドレス・ユーザー詳細・スキル)とアイコン画像の変更
-definePageMeta({ middleware: 'auth' })
+definePageMeta({ middleware: 'auth', layout: 'mypage' })
 
-const { me, logout } = useMe()
+const { me } = useMe()
 
 const nameSettingOptions: { value: NameSetting, label: string }[] = [
   { value: 1, label: '非表示' },
@@ -114,127 +114,115 @@ async function uploadImage(event: Event) {
   }
 }
 
-async function onLogout() {
-  await logout()
-  await navigateTo('/')
-}
-
 useSeoMeta({ title: 'マイページ', robots: 'noindex' })
 </script>
 
 <template>
-  <LayoutSidebarFrame page-type="other" :breadcrumbs="[{ label: 'Home', path: '/' }, { label: 'マイページ', path: '/mypage' }]">
-    <div class="container">
-      <div class="row py-5 justify-content-center">
-        <div class="col-lg-9">
-          <SectionHeading title="My Page" subtitle="マイページ" />
+  <div>
+    <div class="mb-4 d-flex align-items-center justify-content-between">
+      <h1 class="h5 mb-0">プロフィール</h1>
+    </div>
 
-          <div class="d-flex justify-content-end gap-3 mb-3 small">
-            <NuxtLink to="/mypage/articles">記事の管理</NuxtLink>
-            <NuxtLink to="/mypage/password">パスワードの変更</NuxtLink>
-            <button type="button" class="btn btn-link btn-sm p-0" @click="onLogout">ログアウト</button>
+    <div class="row g-4">
+      <div class="col-lg-4 order-lg-2">
+        <div class="card card-body p-4">
+          <h2 class="h6 fw-bold mb-3">アイコン画像</h2>
+          <div class="text-center">
+            <img v-if="me?.detail" :src="me.detail.user_image_url" alt="" class="rounded-circle border mb-3" width="128" height="128">
+            <input type="file" accept="image/*" class="form-control form-control-sm" aria-label="アイコン画像を選択" :disabled="uploading || !me?.detail" @change="uploadImage">
+            <div class="form-text">画像は中央を正方形に切り抜いて保存します。</div>
+            <div v-if="imageError" class="text-danger small mt-1">{{ imageError }}</div>
           </div>
-
-          <div class="card card-body shadow-sm mb-4">
-            <h2 class="h6 fw-bold mb-3">アイコン画像</h2>
-            <div class="d-flex align-items-center gap-3">
-              <img v-if="me?.detail" :src="me.detail.user_image_url" alt="" class="rounded-circle border" width="96" height="96">
-              <div>
-                <input type="file" accept="image/*" class="form-control form-control-sm" :disabled="uploading || !me?.detail" @change="uploadImage">
-                <div class="form-text">画像は中央を正方形に切り抜いて保存します。</div>
-                <div v-if="imageError" class="text-danger small mt-1">{{ imageError }}</div>
-              </div>
-            </div>
-          </div>
-
-          <form class="card card-body shadow-sm" novalidate @submit.prevent="saveProfile">
-            <h2 class="h6 fw-bold mb-3">プロフィール</h2>
-            <div v-if="status" class="alert alert-success small" role="status">{{ status }}</div>
-            <div v-if="errors._" class="alert alert-danger small" role="alert">{{ errors._ }}</div>
-
-            <div class="row g-3">
-              <div class="col-md-6">
-                <label for="me-name" class="form-label">アカウント名</label>
-                <input id="me-name" v-model="form.name" type="text" class="form-control" :class="{ 'is-invalid': errors.name }" required>
-                <div class="invalid-feedback">{{ errors.name }}</div>
-              </div>
-              <div class="col-md-6">
-                <label for="me-email" class="form-label">メールアドレス</label>
-                <input id="me-email" v-model="form.email" type="email" class="form-control" :class="{ 'is-invalid': errors.email }" autocomplete="email" required>
-                <div class="invalid-feedback">{{ errors.email }}</div>
-              </div>
-              <div class="col-md-4">
-                <label for="me-family-name" class="form-label">姓</label>
-                <input id="me-family-name" v-model="form.family_name" type="text" class="form-control" :class="{ 'is-invalid': errors['user_detail.family_name'] }" required>
-                <div class="invalid-feedback">{{ errors['user_detail.family_name'] }}</div>
-              </div>
-              <div class="col-md-4">
-                <label for="me-first-name" class="form-label">名</label>
-                <input id="me-first-name" v-model="form.first_name" type="text" class="form-control" :class="{ 'is-invalid': errors['user_detail.first_name'] }" required>
-                <div class="invalid-feedback">{{ errors['user_detail.first_name'] }}</div>
-              </div>
-              <div class="col-md-4">
-                <label for="me-nick-name" class="form-label">ニックネーム</label>
-                <input id="me-nick-name" v-model="form.nick_name" type="text" class="form-control" :class="{ 'is-invalid': errors['user_detail.nick_name'] }" required>
-                <div class="invalid-feedback">{{ errors['user_detail.nick_name'] }}</div>
-              </div>
-              <div class="col-md-4">
-                <label for="me-birthday" class="form-label">誕生日</label>
-                <input id="me-birthday" v-model="form.birthday" type="date" class="form-control" :class="{ 'is-invalid': errors['user_detail.birthday'] }" required>
-                <div class="invalid-feedback">{{ errors['user_detail.birthday'] }}</div>
-              </div>
-              <div class="col-md-4">
-                <label for="me-name-settings" class="form-label">公開する名前</label>
-                <select id="me-name-settings" v-model.number="form.name_settings" class="form-select" :class="{ 'is-invalid': errors['user_detail.name_settings'] }">
-                  <option v-for="option in nameSettingOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
-                </select>
-                <div class="invalid-feedback">{{ errors['user_detail.name_settings'] }}</div>
-              </div>
-              <div class="col-md-4 d-flex align-items-end">
-                <div class="form-check mb-2">
-                  <input id="me-view-flag" v-model="form.view_flag" type="checkbox" class="form-check-input">
-                  <label for="me-view-flag" class="form-check-label">プロフィールを公開する</label>
-                </div>
-              </div>
-              <div class="col-12">
-                <label for="me-comment" class="form-label">コメント</label>
-                <textarea id="me-comment" v-model="form.comment" class="form-control" rows="3" :class="{ 'is-invalid': errors['user_detail.comment'] }" />
-                <div class="invalid-feedback">{{ errors['user_detail.comment'] }}</div>
-              </div>
-
-              <div class="col-12">
-                <div class="form-label">スキル</div>
-                <div v-for="(skill, index) in form.skills" :key="skill.id ?? `new-${index}`" class="row g-2 align-items-start mb-2">
-                  <div class="col">
-                    <input
-                      v-model="skill.name"
-                      type="text"
-                      class="form-control form-control-sm"
-                      :class="{ 'is-invalid': errors[`user_detail.skills.${index}.name`] }"
-                      placeholder="スキル名"
-                      aria-label="スキル名"
-                    >
-                    <div class="invalid-feedback">{{ errors[`user_detail.skills.${index}.name`] }}</div>
-                  </div>
-                  <div class="col-auto">
-                    <select v-model.number="skill.level" class="form-select form-select-sm" aria-label="習熟度">
-                      <option v-for="level in MAX_SKILL_LEVEL" :key="level" :value="level">{{ '★'.repeat(level) }}</option>
-                    </select>
-                  </div>
-                  <div class="col-auto">
-                    <button type="button" class="btn btn-outline-danger btn-sm" aria-label="削除" @click="removeSkill(index)">−</button>
-                  </div>
-                </div>
-                <button type="button" class="btn btn-outline-secondary btn-sm" @click="addSkill">+ スキルを追加</button>
-              </div>
-            </div>
-
-            <div class="mt-4">
-              <button type="submit" class="btn btn-primary" :disabled="saving">保存する</button>
-            </div>
-          </form>
         </div>
       </div>
+
+      <div class="col-lg-8 order-lg-1">
+        <form class="card card-body p-4" novalidate @submit.prevent="saveProfile">
+          <div v-if="status" class="alert alert-success small" role="status">{{ status }}</div>
+          <div v-if="errors._" class="alert alert-danger small" role="alert">{{ errors._ }}</div>
+
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label for="me-name" class="form-label">アカウント名</label>
+              <input id="me-name" v-model="form.name" type="text" class="form-control" :class="{ 'is-invalid': errors.name }" required>
+              <div class="invalid-feedback">{{ errors.name }}</div>
+            </div>
+            <div class="col-md-6">
+              <label for="me-email" class="form-label">メールアドレス</label>
+              <input id="me-email" v-model="form.email" type="email" class="form-control" :class="{ 'is-invalid': errors.email }" autocomplete="email" required>
+              <div class="invalid-feedback">{{ errors.email }}</div>
+            </div>
+            <div class="col-md-4">
+              <label for="me-family-name" class="form-label">姓</label>
+              <input id="me-family-name" v-model="form.family_name" type="text" class="form-control" :class="{ 'is-invalid': errors['user_detail.family_name'] }" required>
+              <div class="invalid-feedback">{{ errors['user_detail.family_name'] }}</div>
+            </div>
+            <div class="col-md-4">
+              <label for="me-first-name" class="form-label">名</label>
+              <input id="me-first-name" v-model="form.first_name" type="text" class="form-control" :class="{ 'is-invalid': errors['user_detail.first_name'] }" required>
+              <div class="invalid-feedback">{{ errors['user_detail.first_name'] }}</div>
+            </div>
+            <div class="col-md-4">
+              <label for="me-nick-name" class="form-label">ニックネーム</label>
+              <input id="me-nick-name" v-model="form.nick_name" type="text" class="form-control" :class="{ 'is-invalid': errors['user_detail.nick_name'] }" required>
+              <div class="invalid-feedback">{{ errors['user_detail.nick_name'] }}</div>
+            </div>
+            <div class="col-md-4">
+              <label for="me-birthday" class="form-label">誕生日</label>
+              <input id="me-birthday" v-model="form.birthday" type="date" class="form-control" :class="{ 'is-invalid': errors['user_detail.birthday'] }" required>
+              <div class="invalid-feedback">{{ errors['user_detail.birthday'] }}</div>
+            </div>
+            <div class="col-md-4">
+              <label for="me-name-settings" class="form-label">公開する名前</label>
+              <select id="me-name-settings" v-model.number="form.name_settings" class="form-select" :class="{ 'is-invalid': errors['user_detail.name_settings'] }">
+                <option v-for="option in nameSettingOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
+              </select>
+              <div class="invalid-feedback">{{ errors['user_detail.name_settings'] }}</div>
+            </div>
+            <div class="col-md-4 d-flex align-items-end">
+              <div class="form-check mb-2">
+                <input id="me-view-flag" v-model="form.view_flag" type="checkbox" class="form-check-input">
+                <label for="me-view-flag" class="form-check-label">プロフィールを公開する</label>
+              </div>
+            </div>
+            <div class="col-12">
+              <label for="me-comment" class="form-label">コメント</label>
+              <textarea id="me-comment" v-model="form.comment" class="form-control" rows="3" :class="{ 'is-invalid': errors['user_detail.comment'] }" />
+              <div class="invalid-feedback">{{ errors['user_detail.comment'] }}</div>
+            </div>
+
+            <div class="col-12">
+              <div class="form-label">スキル</div>
+              <div v-for="(skill, index) in form.skills" :key="skill.id ?? `new-${index}`" class="row g-2 align-items-start mb-2">
+                <div class="col">
+                  <input
+                    v-model="skill.name"
+                    type="text"
+                    class="form-control form-control-sm"
+                    :class="{ 'is-invalid': errors[`user_detail.skills.${index}.name`] }"
+                    placeholder="スキル名"
+                    aria-label="スキル名"
+                  >
+                  <div class="invalid-feedback">{{ errors[`user_detail.skills.${index}.name`] }}</div>
+                </div>
+                <div class="col-auto">
+                  <select v-model.number="skill.level" class="form-select form-select-sm" aria-label="習熟度">
+                    <option v-for="level in MAX_SKILL_LEVEL" :key="level" :value="level">{{ '★'.repeat(level) }}</option>
+                  </select>
+                </div>
+                <div class="col-auto">
+                  <button type="button" class="btn btn-outline-danger btn-sm" aria-label="削除" @click="removeSkill(index)">−</button>
+                </div>
+              </div>
+              <button type="button" class="btn btn-outline-secondary btn-sm" @click="addSkill">+ スキルを追加</button>
+            </div>
+          </div>
+
+          <div class="mt-4">
+            <button type="submit" class="btn btn-primary" :disabled="saving">保存する</button>
+          </div>
+        </form>
+      </div>
     </div>
-  </LayoutSidebarFrame>
+  </div>
 </template>

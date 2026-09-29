@@ -28,6 +28,7 @@ export default defineNuxtConfig({
     'bootstrap-icons/font/bootstrap-icons.css',
     'aos/dist/aos.css',
     '~/assets/styles/main.scss',
+    '~/assets/styles/mypage.scss',
   ],
   runtimeConfig: {
     // SSR 時(Nuxt サーバー → biscuit)の API のベース URL。NUXT_API_BASE で上書きする
