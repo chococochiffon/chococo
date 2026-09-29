@@ -22,15 +22,17 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="container">
-    <div class="row py-5">
-      <SectionHeading title="FAQs" subtitle="聞いてみたいこと" />
-      <div v-if="questionAnswers.length" class="col-lg-12">
-        <div class="accordion accordion-flush">
-          <FaqItem v-for="questionAnswer in questionAnswers" :key="questionAnswer.id" :question-answer="questionAnswer" />
+  <LayoutSidebarFrame page-type="other">
+    <div class="container">
+      <div class="row py-5">
+        <SectionHeading title="FAQs" subtitle="聞いてみたいこと" />
+        <div v-if="questionAnswers.length" class="col-lg-12">
+          <div class="accordion accordion-flush">
+            <FaqItem v-for="questionAnswer in questionAnswers" :key="questionAnswer.id" :question-answer="questionAnswer" />
+          </div>
         </div>
+        <p v-else class="col-lg-12 text-center text-body-secondary">FAQ はまだありません。</p>
       </div>
-      <p v-else class="col-lg-12 text-center text-body-secondary">FAQ はまだありません。</p>
     </div>
-  </div>
+  </LayoutSidebarFrame>
 </template>

@@ -212,6 +212,34 @@ export type ResolveResponse =
   | { type: 'custom_page_list', data: null, custom_page_type: CustomPageType, call_contents: CallContent[] }
   | { type: 'custom_page', data: CustomPage, custom_page_type: CustomPageType, call_contents: CallContent[] }
 
+// レイアウトを切り替えるページの種類(カスタムページは記事型を article・固定ページ型を single_page、一覧などは other)
+export type LayoutPageType = 'top' | 'article' | 'single_page' | 'other'
+
+export type SidebarPosition = 'none' | 'left' | 'right'
+
+export type LayoutRegion = 'header' | 'sidebar' | 'footer'
+
+interface LayoutBlockBase {
+  // 見出しを持たない部品(サイトタイトルなど)や未設定は null
+  title: string | null
+  subtitle: string | null
+}
+
+// レイアウトの領域に置く部品。サイトタイトル・SNS リンク・コピーライトはサイト設定の値で表示する
+export type LayoutBlock = LayoutBlockBase & (
+  | { block_type: 'site_title' | 'social_links' | 'copyright' }
+  | { block_type: 'nav_menu', single_pages: SinglePage[], custom_page_types: CustomPageType[] }
+  | { block_type: 'free_text', content: string | null }
+  // データ種別がなくなっている場合は null
+  | { block_type: 'call_content', call_content: CallContent | null }
+)
+
+// GET /api/layout の data
+export interface Layout {
+  pages: Record<LayoutPageType, { sidebar_position: SidebarPosition }>
+  regions: Record<LayoutRegion, LayoutBlock[]>
+}
+
 // リンク系(リンク・リンクリスト)の表示用に、記事・固定ページ・ユーザー詳細をそろえた項目
 export interface LinkItem {
   key: string

@@ -147,6 +147,16 @@ body{
       padding-left: #{$i * 3}em;
     }
   }
+  // Quill 2 は箇条書きも <ol> の中に data-list="bullet" の <li> で出力する
+  li[data-list="bullet"] {
+    list-style-type: disc;
+  }
+}
+
+// サイドバーのあるレイアウトでは、本文の中の .container を本文の列の幅に合わせる
+.layout-main .container {
+  max-width: 100%;
+  padding-inline: 0;
 }
 
 // FAQ の質問・回答の文章(管理画面で入力した改行をそのまま表示する)

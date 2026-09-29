@@ -38,7 +38,7 @@ docker compose down
 - カスタムページ（biscuit で登録した種類ごとのページ。URL は `/カスタム名の複数形/スラッグ`）は `[...slug].vue` が表示する。パス解決 API の `type=custom_page_list` は `components/custom-page/List.vue`（`GET /api/custom-pages/{name}` の一覧）、`type=custom_page` は記事型を記事・固定ページ型を固定ページと同じ部品で表示し、カスタムフォームの項目を `components/custom-page/Fields.vue` で並べる。ナビには `GET /api/custom-page-types` の種類を並べる。呼び出しコンテンツの実データ（キーは `user_make_…`）は `utils/content.ts` の `callContentItems()` が記事・固定ページとしてそろえる。
 - `src/app/pages/gallery.vue` — ギャラリー（`GET /api/gallery-images` を並び順ですべて表示し、`GET /api/gallery-categories` の分類のボタンで絞り込む）。画像をクリックすると名前・コメント付きで拡大表示する。
 - `src/app/components/page/` — 記事・固定ページの本文。
-- ナビ・フッターは `GET /api/call-contents?place=3`（その他）、タイトル・OGP などは `GET /api/site-setting` から取得する。
+- ヘッダー・サイドバー・フッターは `GET /api/layout`（biscuit のレイアウト管理）、タイトル・SNS リンク・OGP などは `GET /api/site-setting` から取得する。サイドバーはページの種類（トップ・記事・固定ページ・その他）ごとに設定された位置に、各ページが `LayoutSidebarFrame` で本文を包んで表示する。
 - `src/app/components/TopHero.vue` — トップのメインビジュアル。サイト設定の `top_slider_images`（16:9。切り取らずに全体を見せるため、ヘッダーを除いた画面の高さに収まる幅まで縮めて中央に置く）を `TopSlider.vue` でフェード切り替え（5秒ごと・ホバー中と視差効果を減らす設定では停止、前後ボタン・インジケーター付き、`url` があればリンク）で表示する。未登録なら既定の画像にサイト名・説明を重ねる（サイト設定の `site_image` は OGP 用）。
 - 型チェックは `src` で `npm run typecheck`。
 - ESLint（`@nuxt/eslint`。設定は `src/eslint.config.mjs`、書式も ESLint で揃える）は `src` で `npm run lint`、自動修正は `npm run lint:fix`。

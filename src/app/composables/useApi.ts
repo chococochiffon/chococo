@@ -1,5 +1,5 @@
 import type { UseFetchOptions } from 'nuxt/app'
-import type { CallContent, CustomPageType, GalleryCategory, GalleryImage, QuestionAnswer, SiteSetting } from '~/types/api'
+import type { GalleryCategory, GalleryImage, Layout, QuestionAnswer, SiteSetting } from '~/types/api'
 
 /**
  * biscuit の API を useFetch で呼び出す(パスは /api からの相対。例: '/resolve')。
@@ -23,14 +23,14 @@ export function useSiteSetting() {
 }
 
 /**
- * ヘッダー・フッターなど共通部品に置く呼び出しコンテンツ(設置場所: その他)を取得する。
+ * レイアウト(ページの種類ごとのサイドバーの位置と、ヘッダー・サイドバー・フッターに置く部品)を取得する。
+ * キーを固定して、ページを移動しても取得し直さない。
  */
-export function useCommonCallContents() {
-  return useFetch('/call-contents', {
-    key: 'call-contents-others',
-    query: { place: 3 },
+export function useSiteLayout() {
+  return useFetch('/layout', {
+    key: 'layout',
     $fetch: useNuxtApp().$api as typeof $fetch,
-    transform: (response: { data: CallContent[] }) => response.data,
+    transform: (response: { data: Layout }) => response.data,
   })
 }
 
@@ -65,16 +65,5 @@ export function useGalleryCategories() {
     key: 'gallery-categories',
     $fetch: useNuxtApp().$api as typeof $fetch,
     transform: (response: { data: GalleryCategory[] }) => response.data,
-  })
-}
-
-/**
- * カスタムページの種類の一覧(並び順)を取得する(ナビに種類ごとの一覧へのリンクを並べる)。
- */
-export function useCustomPageTypes() {
-  return useFetch('/custom-page-types', {
-    key: 'custom-page-types',
-    $fetch: useNuxtApp().$api as typeof $fetch,
-    transform: (response: { data: CustomPageType[] }) => response.data,
   })
 }

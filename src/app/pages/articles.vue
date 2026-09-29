@@ -28,18 +28,20 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="container">
-    <div class="row py-5">
-      <SectionHeading title="Articles" subtitle="記事一覧" />
-      <template v-if="articles?.data.length">
-        <div v-for="article in articles.data" :key="article.id" class="col-lg-4 py-2 my-2">
-          <ArticleCard :article="article" />
-        </div>
-        <div class="col-lg-12 mt-4">
-          <AppPagination :current-page="articles.meta.current_page" :last-page="articles.meta.last_page" />
-        </div>
-      </template>
-      <p v-else class="col-lg-12 text-center text-body-secondary">記事はまだありません。</p>
+  <LayoutSidebarFrame page-type="other">
+    <div class="container">
+      <div class="row py-5">
+        <SectionHeading title="Articles" subtitle="記事一覧" />
+        <template v-if="articles?.data.length">
+          <div v-for="article in articles.data" :key="article.id" class="col-lg-4 py-2 my-2">
+            <ArticleCard :article="article" />
+          </div>
+          <div class="col-lg-12 mt-4">
+            <AppPagination :current-page="articles.meta.current_page" :last-page="articles.meta.last_page" />
+          </div>
+        </template>
+        <p v-else class="col-lg-12 text-center text-body-secondary">記事はまだありません。</p>
+      </div>
     </div>
-  </div>
+  </LayoutSidebarFrame>
 </template>

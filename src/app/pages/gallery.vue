@@ -31,35 +31,37 @@ useSeoMeta({
 </script>
 
 <template>
-  <div class="container">
-    <div class="row py-5">
-      <SectionHeading title="Gallery" subtitle="ギャラリー" />
-      <div v-if="categories.length" class="col-lg-12 d-flex flex-wrap justify-content-center gap-2 mb-4" role="group" aria-label="分類で絞り込む">
-        <button
-          type="button"
-          class="btn btn-sm rounded-pill"
-          :class="selectedCategoryId === null ? 'btn-secondary' : 'btn-outline-secondary'"
-          :aria-pressed="selectedCategoryId === null"
-          @click="selectedCategoryId = null"
-        >
-          すべて
-        </button>
-        <button
-          v-for="category in categories"
-          :key="category.id"
-          type="button"
-          class="btn btn-sm rounded-pill"
-          :class="selectedCategoryId === category.id ? 'btn-secondary' : 'btn-outline-secondary'"
-          :aria-pressed="selectedCategoryId === category.id"
-          @click="selectedCategoryId = category.id"
-        >
-          {{ category.name }}
-        </button>
+  <LayoutSidebarFrame page-type="other">
+    <div class="container">
+      <div class="row py-5">
+        <SectionHeading title="Gallery" subtitle="ギャラリー" />
+        <div v-if="categories.length" class="col-lg-12 d-flex flex-wrap justify-content-center gap-2 mb-4" role="group" aria-label="分類で絞り込む">
+          <button
+            type="button"
+            class="btn btn-sm rounded-pill"
+            :class="selectedCategoryId === null ? 'btn-secondary' : 'btn-outline-secondary'"
+            :aria-pressed="selectedCategoryId === null"
+            @click="selectedCategoryId = null"
+          >
+            すべて
+          </button>
+          <button
+            v-for="category in categories"
+            :key="category.id"
+            type="button"
+            class="btn btn-sm rounded-pill"
+            :class="selectedCategoryId === category.id ? 'btn-secondary' : 'btn-outline-secondary'"
+            :aria-pressed="selectedCategoryId === category.id"
+            @click="selectedCategoryId = category.id"
+          >
+            {{ category.name }}
+          </button>
+        </div>
+        <div v-if="filteredImages.length" class="col-lg-12">
+          <GalleryTiles :key="selectedCategoryId ?? 'all'" :images="filteredImages" />
+        </div>
+        <p v-else class="col-lg-12 text-center text-body-secondary">ギャラリーの画像はまだありません。</p>
       </div>
-      <div v-if="filteredImages.length" class="col-lg-12">
-        <GalleryTiles :key="selectedCategoryId ?? 'all'" :images="filteredImages" />
-      </div>
-      <p v-else class="col-lg-12 text-center text-body-secondary">ギャラリーの画像はまだありません。</p>
     </div>
-  </div>
+  </LayoutSidebarFrame>
 </template>
