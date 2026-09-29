@@ -1,5 +1,7 @@
 <script setup lang="ts">
 // パスワードを忘れたとき: メールアドレスを入力すると、biscuit から再設定のリンクをメールで送る
+definePageMeta({ headerNavigation: false })
+
 const email = ref('')
 const status = ref('')
 const errors = ref<Record<string, string>>({})
@@ -33,7 +35,7 @@ useSeoMeta({ title: 'パスワードの再設定', robots: 'noindex' })
 </script>
 
 <template>
-  <LayoutSidebarFrame page-type="other" :breadcrumbs="[{ label: 'Home', path: '/' }, { label: 'ログイン', path: '/login' }, { label: 'パスワードの再設定', path: '/forgot-password' }]">
+  <LayoutSidebarFrame page-type="other">
     <div class="container">
       <div class="row py-5 justify-content-center">
         <div class="col-md-6 col-lg-5">

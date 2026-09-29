@@ -3,6 +3,11 @@
 // (サイドバーはページの種類ごとに位置が変わるため、各ページが LayoutSidebarFrame で本文を包んで表示する)
 const { data: layout } = await useSiteLayout()
 
+// ページの設定(definePageMeta の headerNavigation: false)で、ヘッダーをサイトタイトルだけにする(ログイン画面など)
+const route = useRoute()
+const headerNavigation = computed(() => route.meta.headerNavigation !== false)
+const headerBlocks = computed(() => (layout.value?.regions.header ?? []).filter(block => headerNavigation.value || block.block_type === 'site_title'))
+
 // ヘッダー(sticky)の実際の高さを CSS 変数 --header-height に入れ、トップのスライダーなどが
 // ヘッダーを除いた画面の高さに収まるよう計算できるようにする(画面幅やメニューの開閉で高さが変わるため監視する)
 const header = ref<HTMLElement>()
@@ -21,7 +26,7 @@ onBeforeUnmount(() => observer?.disconnect())
   <div>
     <!-- header start -->
     <header ref="header" class="sticky-top">
-      <LayoutHeader :blocks="layout?.regions.header ?? []" />
+      <LayoutHeader :blocks="headerBlocks" :show-my-page="headerNavigation" />
     </header>
     <!-- header end -->
     <!-- main start -->
