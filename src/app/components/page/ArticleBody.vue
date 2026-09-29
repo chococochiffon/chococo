@@ -15,7 +15,12 @@ defineProps<{
       </h1>
       <p class="text-body-secondary small mt-3 mb-2">
         <span v-if="article.published_at"><i class="bi bi-calendar3 me-1" />{{ formatDate(article.published_at) }}</span>
-        <span v-if="article.author_name" class="ms-3"><i class="bi bi-person me-1" />{{ article.author_name }}</span>
+        <span v-if="article.author_name" class="ms-3">
+          <i class="bi bi-person me-1" />
+          <!-- 投稿者ページを公開している投稿者は、投稿者ページへリンクする -->
+          <NuxtLink v-if="article.author?.profile_path" :to="article.author.profile_path">{{ article.author_name }}</NuxtLink>
+          <template v-else>{{ article.author_name }}</template>
+        </span>
       </p>
       <div v-if="article.tags?.length" class="d-flex flex-wrap justify-content-center gap-1">
         <span v-for="tag in article.tags" :key="tag.id" class="badge rounded-pill text-bg-light border">#{{ tag.name }}</span>

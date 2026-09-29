@@ -75,7 +75,7 @@ export function toLinkItems(content: CallContentItems): LinkItem[] {
 /**
  * ユーザー詳細の名前の表示設定に従って表示名を返す(非表示の場合は null)。
  */
-export function userDisplayName(userDetail: UserDetail): string | null {
+export function userDisplayName(userDetail: Pick<UserDetail, 'name_settings' | 'family_name' | 'first_name' | 'nick_name'>): string | null {
   switch (userDetail.name_settings) {
     case 2:
       return [userDetail.family_name, userDetail.first_name].filter(Boolean).join(' ') || null

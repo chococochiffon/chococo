@@ -121,6 +121,10 @@ useSeoMeta({ title: 'マイページ', robots: 'noindex' })
   <div>
     <div class="mb-4 d-flex align-items-center justify-content-between">
       <h1 class="h5 mb-0">プロフィール</h1>
+      <!-- 「プロフィールを公開する」がオンなら、公開側の投稿者ページがある -->
+      <NuxtLink v-if="me?.detail?.view_flag" :to="`/authors/${me.id}`" class="btn btn-outline-secondary btn-sm" target="_blank">
+        <i class="bi bi-box-arrow-up-right me-1" />公開中の投稿者ページを見る
+      </NuxtLink>
     </div>
 
     <div class="row g-4">
