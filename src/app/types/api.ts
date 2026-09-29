@@ -254,6 +254,24 @@ export interface Layout {
   regions: Record<LayoutRegion, LayoutBlock[]>
 }
 
+// ログイン中のユーザー(マイページ。GET /api/me)。detail はユーザー詳細が未登録なら null
+export interface Me {
+  id: number
+  name: string
+  email: string
+  detail: {
+    first_name: string
+    family_name: string
+    nick_name: string
+    birthday: string | null
+    comment: string | null
+    view_flag: boolean
+    name_settings: NameSetting
+    user_image_url: string
+    skills: UserSkill[]
+  } | null
+}
+
 // リンク系(リンク・リンクリスト)の表示用に、記事・固定ページ・ユーザー詳細をそろえた項目
 export interface LinkItem {
   key: string
