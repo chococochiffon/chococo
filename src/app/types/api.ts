@@ -204,13 +204,20 @@ export interface CustomSinglePage extends CustomPageBase {
 
 export type CustomPage = CustomArticlePage | CustomSinglePage
 
-// GET /api/resolve のレスポンス
-export type ResolveResponse =
+// パンくずの項目。path が null の項目(公開中のページがない途中の階層)はリンクしない。末尾は表示中のページ
+export interface Breadcrumb {
+  label: string
+  path: string | null
+}
+
+// GET /api/resolve のレスポンス。breadcrumbs はトップでは空
+export type ResolveResponse = { breadcrumbs: Breadcrumb[] } & (
   | { type: 'top', data: null, call_contents: CallContent[] }
   | { type: 'article', data: Article, call_contents: CallContent[] }
   | { type: 'single_page', data: SinglePage, call_contents: CallContent[] }
   | { type: 'custom_page_list', data: null, custom_page_type: CustomPageType, call_contents: CallContent[] }
   | { type: 'custom_page', data: CustomPage, custom_page_type: CustomPageType, call_contents: CallContent[] }
+)
 
 // レイアウトを切り替えるページの種類(カスタムページは記事型を article・固定ページ型を single_page、一覧などは other)
 export type LayoutPageType = 'top' | 'article' | 'single_page' | 'other'
@@ -243,7 +250,7 @@ export type LayoutBlock = LayoutBlockBase & (
 
 // GET /api/layout の data
 export interface Layout {
-  pages: Record<LayoutPageType, { sidebar_position: SidebarPosition }>
+  pages: Record<LayoutPageType, { sidebar_position: SidebarPosition, show_breadcrumbs: boolean }>
   regions: Record<LayoutRegion, LayoutBlock[]>
 }
 

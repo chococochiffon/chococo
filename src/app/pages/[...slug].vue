@@ -57,7 +57,7 @@ useSeoMeta({
 </script>
 
 <template>
-  <LayoutSidebarFrame v-if="page" :page-type="layoutPageType">
+  <LayoutSidebarFrame v-if="page" :page-type="layoutPageType" :breadcrumbs="page.breadcrumbs">
     <div>
       <TopHero v-if="page.type === 'top'" />
       <CustomPageList v-else-if="page.type === 'custom_page_list'" :custom-page-type="page.custom_page_type" />
