@@ -5,7 +5,7 @@ import type { MyGalleryImage } from '~/types/api'
 definePageMeta({ middleware: 'auth', layout: 'mypage' })
 
 const { me } = useMe()
-const flash = useState<string>('my-gallery-flash', () => '')
+const { flash } = useMypageFlash('my-gallery-flash')
 
 async function onSaved(_galleryImage: MyGalleryImage, message: string) {
   flash.value = message
