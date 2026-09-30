@@ -301,6 +301,9 @@ export interface Paginated<T> {
 // マイページの記事の公開ステータス(下書き・承認待ち・公開)
 export type ArticleApproval = 'draft' | 'pending' | 'published'
 
+// 記事の現在の状態(公開ステータスと公開期間を合わせたもの)。公開中・予約公開・公開終了・非公開(公開開始日時の未設定)は公開ステータスが published のもの
+export type ContentStatus = ArticleApproval | 'scheduled' | 'ended' | 'unscheduled'
+
 // マイページの記事(GET /api/me/articles)。公開側の記事に、編集と承認の状態に使う値を足したもの
 export interface MyArticle {
   id: number
@@ -375,4 +378,24 @@ export interface MyPageViews {
   daily: DailyPageViews[]
   // 直近 30 日の人気記事(PV の多い順)
   ranking: (PageViewCount & { article_id: number, title: string, path: string })[]
+}
+
+// マイページのダッシュボードの、自分の記事・ギャラリーの状況など(GET /api/me/dashboard)
+export interface MyDashboard {
+  // 非公開は公開中と予約公開以外のすべて(下書き・承認待ち・公開終了など)
+  counts: {
+    articles: Record<'total' | 'published' | 'scheduled' | 'draft' | 'pending' | 'unpublished', number>
+    gallery_images: Record<'total' | 'published' | 'draft' | 'pending', number>
+  }
+  // 最近編集した記事・画像(更新日時の新しい順)。ギャラリーの status は draft・pending・published
+  recent_contents: { type: 'article' | 'gallery_image', id: number, title: string, status: ContentStatus, updated_at: string | null }[]
+  // 予約公開の記事(今日・明日から 7 日以内。公開開始日時の早い順)
+  scheduled: Record<'today' | 'this_week', { id: number, title: string, publish_at: string }[]>
+  // 該当があるものだけ。returned は差し戻し、no_thumbnail は公開中・予約公開なのにサムネイル未設定、pending は承認待ち
+  warnings: { key: 'returned' | 'no_thumbnail' | 'pending', count: number, items: { type: 'article' | 'gallery_image', id: number, title: string }[] }[]
+  // 自分の最近の操作(新しい順)
+  recent_activities: { action: string, action_label: string, subject_type: string | null, subject_type_label: string | null, subject_label: string | null, created_at: string | null }[]
+  account: { skip_approval: boolean, public_profile: boolean, profile_path: string | null, recent_logins: string[] }
+  // 自分がアップロードした画像(記事のサムネイル・ギャラリー・アイコン)
+  media: { count: number, bytes: number, groups: { key: 'thumbnail' | 'gallery' | 'icon', count: number, bytes: number }[] }
 }

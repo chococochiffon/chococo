@@ -173,3 +173,19 @@ export function customPageAsArticle(page: CustomArticlePage): Article {
 export function customPageAsSinglePage(page: CustomSinglePage): SinglePage {
   return { ...page, parent_path: null, slug: page.slug ?? String(page.id) }
 }
+
+/**
+ * バイト数を「1.5 MB」のように整形する(管理画面のダッシュボードと同じ表記)。
+ */
+export function formatFileSize(bytes: number): string {
+  const units = ['B', 'KB', 'MB', 'GB', 'TB']
+  let size = bytes
+  let unit = 0
+
+  while (size >= 1024 && unit < units.length - 1) {
+    size /= 1024
+    unit++
+  }
+
+  return `${size.toLocaleString('ja-JP', { maximumFractionDigits: unit === 0 ? 0 : 1, minimumFractionDigits: unit === 0 ? 0 : 1 })} ${units[unit]}`
+}
