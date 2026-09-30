@@ -1,23 +1,14 @@
 <script setup lang="ts">
-import type { ArticleApproval, MyGalleryImage, Paginated } from '~/types/api'
+import type { MyGalleryImage, Paginated } from '~/types/api'
 
 // マイページ: 自分が投稿したギャラリーの画像の一覧(公開ステータスで絞り込み、更新日時の新しい順)
 definePageMeta({ middleware: 'auth', layout: 'mypage' })
 
-const route = useRoute()
 // 投稿・削除のあとに、元のページから渡されたメッセージ
-const flash = useState<string>('my-gallery-flash', () => '')
-const status = ref(flash.value)
-flash.value = ''
+const status = ref(useMypageFlash('my-gallery-flash').take())
 
-const filters: { value: ArticleApproval | undefined, label: string }[] = [
-  { value: undefined, label: 'すべて' },
-  { value: 'draft', label: '下書き' },
-  { value: 'pending', label: '承認待ち' },
-  { value: 'published', label: '公開中' },
-]
-
-const approval = computed(() => filters.find(filter => filter.value === route.query.approval)?.value)
+const route = useRoute()
+const { filters, approval } = useApprovalFilter()
 const { data: galleryImages, error } = await useFetch<Paginated<MyGalleryImage>>('/api/me/gallery-images', {
   query: computed(() => ({ approval: approval.value, page: route.query.page })),
 })
@@ -35,13 +26,7 @@ useSeoMeta({ title: 'ギャラリーの管理', robots: 'noindex' })
     <div v-if="status" class="alert alert-success" role="status">{{ status }}</div>
     <div v-if="error" class="alert alert-danger" role="alert">画像の一覧を取得できませんでした。</div>
 
-    <div class="card card-body mb-3 py-2">
-      <ul class="nav nav-pills small" aria-label="ステータスで絞り込み">
-        <li v-for="filter in filters" :key="filter.label" class="nav-item">
-          <NuxtLink class="nav-link py-1" :class="{ active: filter.value === approval }" :to="{ query: { approval: filter.value } }">{{ filter.label }}</NuxtLink>
-        </li>
-      </ul>
-    </div>
+    <MypageApprovalFilterNav :filters="filters" :approval="approval" />
 
     <div class="card">
       <div class="table-responsive">

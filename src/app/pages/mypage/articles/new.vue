@@ -5,7 +5,7 @@ import type { MyArticle } from '~/types/api'
 definePageMeta({ middleware: 'auth', layout: 'mypage' })
 
 const { me } = useMe()
-const flash = useState<string>('my-articles-flash', () => '')
+const { flash } = useMypageFlash('my-articles-flash')
 
 async function onSaved(_article: MyArticle, message: string) {
   flash.value = message
