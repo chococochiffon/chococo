@@ -41,7 +41,7 @@ useSeoMeta({ title: 'ログイン', robots: 'noindex' })
   <LayoutSidebarFrame page-type="other">
     <div class="container">
       <div class="row py-5 justify-content-center">
-        <div class="col-md-6 col-lg-5">
+        <div class="col-md-6 col-lg-5 mypage-accent">
           <SectionHeading title="Login" subtitle="ログイン" />
           <form class="card card-body shadow-sm" novalidate @submit.prevent="submit">
             <div v-if="errors._" class="alert alert-danger small" role="alert">{{ errors._ }}</div>

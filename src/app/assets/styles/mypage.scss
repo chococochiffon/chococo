@@ -1,29 +1,100 @@
 // マイページ(ログイン中の画面。layouts/mypage.vue)のスタイル。biscuit のシステム管理画面(resources/css/admin.css)のデザインを踏襲する。
-// 公開側のページに影響しないよう、すべて .mypage-shell の中だけに効かせる
+// 公開側のページに影響しないよう、すべて .mypage-shell(とログイン系のフォームの .mypage-accent)の中だけに効かせる
+
+// ボタン・リンク・入力欄のフォーカスなどのアクセント色。
+// マイページ全体(.mypage-shell)と、公開側のレイアウトで表示するログイン・パスワード再設定のフォーム(.mypage-accent)で共通に使う
+@mixin mypage-accent {
+  --mypage-primary: #e99540;
+  --mypage-primary-rgb: 233, 149, 64;
+  --mypage-primary-dark: #cf7f2e;
+  --mypage-primary-dark-rgb: 207, 127, 46;
+  --bs-primary: var(--mypage-primary);
+  --bs-primary-rgb: var(--mypage-primary-rgb);
+  --bs-link-color: var(--mypage-primary);
+  --bs-link-color-rgb: var(--mypage-primary-rgb);
+  --bs-link-hover-color: var(--mypage-primary-dark);
+  --bs-link-hover-color-rgb: var(--mypage-primary-dark-rgb);
+
+  .btn-primary {
+    --bs-btn-bg: var(--mypage-primary);
+    --bs-btn-border-color: var(--mypage-primary);
+    --bs-btn-hover-bg: var(--mypage-primary-dark);
+    --bs-btn-hover-border-color: var(--mypage-primary-dark);
+    --bs-btn-active-bg: var(--mypage-primary-dark);
+    --bs-btn-active-border-color: var(--mypage-primary-dark);
+    --bs-btn-disabled-bg: var(--mypage-primary);
+    --bs-btn-disabled-border-color: var(--mypage-primary);
+    --bs-btn-focus-shadow-rgb: var(--mypage-primary-rgb);
+  }
+
+  .btn-outline-primary {
+    --bs-btn-color: var(--mypage-primary);
+    --bs-btn-border-color: var(--mypage-primary);
+    --bs-btn-hover-bg: var(--mypage-primary);
+    --bs-btn-hover-border-color: var(--mypage-primary);
+    --bs-btn-active-bg: var(--mypage-primary);
+    --bs-btn-active-border-color: var(--mypage-primary);
+    --bs-btn-focus-shadow-rgb: var(--mypage-primary-rgb);
+  }
+
+  .nav-pills {
+    --bs-nav-pills-link-active-bg: var(--mypage-primary);
+  }
+
+  .page-link {
+    color: var(--mypage-primary);
+  }
+
+  .page-item.active .page-link {
+    background-color: var(--mypage-primary);
+    border-color: var(--mypage-primary);
+    color: #fff;
+  }
+
+  .form-control:focus,
+  .form-select:focus {
+    border-color: var(--mypage-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--mypage-primary-rgb), 0.25);
+  }
+
+  .form-check-input:checked {
+    background-color: var(--mypage-primary);
+    border-color: var(--mypage-primary);
+  }
+
+  .form-check-input:focus {
+    border-color: var(--mypage-primary);
+    box-shadow: 0 0 0 0.2rem rgba(var(--mypage-primary-rgb), 0.25);
+  }
+}
+
+.mypage-accent {
+  @include mypage-accent;
+}
+
 .mypage-shell {
-  --mypage-primary: #334155;
-  --mypage-primary-dark: #1e293b;
+  @include mypage-accent;
+
   --mypage-text: #0d0116;
+  // 補助の文字(サイドメニューの見出し・アイコン)の色。本文に使うと薄くて読めないため、補助の文字だけに使う
+  --mypage-text-muted: #c2c0c4;
+  --mypage-sidebar-bg: #f8f6f6;
+  // マウスを乗せたとき(サイドメニューの項目・一覧の行・画像のドロップ欄)と、表示中のメニュー項目の背景
+  --mypage-hover-bg: #fef2df;
   --mypage-shadow: 0 0.15rem 1.75rem rgba(13, 1, 22, 0.1);
   --bs-body-color: var(--mypage-text);
-  --bs-primary: var(--mypage-primary);
-  --bs-primary-rgb: 51, 65, 85;
-  --bs-link-color: var(--mypage-primary);
-  --bs-link-color-rgb: 51, 65, 85;
-  --bs-link-hover-color: var(--mypage-primary-dark);
-  --bs-link-hover-color-rgb: 30, 41, 59;
 
   min-height: 100vh;
   // 管理画面と同じ Nunito。日本語はシステムの日本語フォント、なければ公開側で読み込んでいる Zen Maru Gothic で表示する
   font-family: 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Hiragino Sans', 'Yu Gothic UI', Meiryo, 'Zen Maru Gothic', sans-serif;
   color: var(--mypage-text);
-  background-color: #f8f9fa;
+  background-color: #fefefe;
 
   // SB Admin 2 風のサイドバー
   .mypage-sidebar {
     width: 224px;
     min-height: 100vh;
-    background-image: linear-gradient(180deg, #334155 10%, #1e293b 100%);
+    background-color: var(--mypage-sidebar-bg);
   }
 
   .mypage-sidebar-brand {
@@ -32,7 +103,7 @@
     font-weight: 800;
     font-size: 1.1rem;
     letter-spacing: 0.05rem;
-    color: #fff;
+    color: var(--mypage-primary);
     text-align: center;
     text-decoration: none;
   }
@@ -40,13 +111,13 @@
   .mypage-sidebar-divider {
     margin: 0 1rem 1rem;
     border: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    border-top: 1px solid var(--mypage-text-muted);
     opacity: 1;
   }
 
   .mypage-sidebar-heading {
     padding: 0 1.5rem 0.5rem;
-    color: rgba(255, 255, 255, 0.5);
+    color: var(--mypage-text-muted);
     font-size: 0.7rem;
     font-weight: 800;
     letter-spacing: 0.05rem;
@@ -58,7 +129,7 @@
     .nav-link {
       display: flex;
       align-items: center;
-      color: rgba(255, 255, 255, 0.85);
+      color: #5f5c63;
       font-weight: 700;
       font-size: 0.85rem;
       border-radius: 0.5rem;
@@ -68,8 +139,12 @@
 
     .nav-link:hover,
     .nav-link.active {
-      color: #fff;
-      background-color: rgba(255, 255, 255, 0.1);
+      background-color: var(--mypage-hover-bg);
+    }
+
+    // 表示中の画面(記事の新規作成・編集なら「記事の管理」)は、ボタンと同じ色にする
+    .nav-link.active {
+      color: var(--mypage-primary);
     }
 
     .nav-link i {
@@ -77,6 +152,11 @@
       margin-right: 0.6rem;
       text-align: center;
       font-size: 1rem;
+      color: var(--mypage-text-muted);
+    }
+
+    .nav-link.active i {
+      color: var(--mypage-primary);
     }
   }
 
@@ -104,42 +184,6 @@
       z-index: 1040;
       background-color: rgba(13, 1, 22, 0.4);
     }
-  }
-
-  .btn-primary {
-    --bs-btn-bg: #334155;
-    --bs-btn-border-color: #334155;
-    --bs-btn-hover-bg: #1e293b;
-    --bs-btn-hover-border-color: #1e293b;
-    --bs-btn-active-bg: #1e293b;
-    --bs-btn-active-border-color: #1e293b;
-    --bs-btn-disabled-bg: #334155;
-    --bs-btn-disabled-border-color: #334155;
-    --bs-btn-focus-shadow-rgb: 51, 65, 85;
-  }
-
-  .btn-outline-primary {
-    --bs-btn-color: #334155;
-    --bs-btn-border-color: #334155;
-    --bs-btn-hover-bg: #334155;
-    --bs-btn-hover-border-color: #334155;
-    --bs-btn-active-bg: #334155;
-    --bs-btn-active-border-color: #334155;
-    --bs-btn-focus-shadow-rgb: 51, 65, 85;
-  }
-
-  .nav-pills {
-    --bs-nav-pills-link-active-bg: #334155;
-  }
-
-  .page-link {
-    color: #334155;
-  }
-
-  .page-item.active .page-link {
-    background-color: #334155;
-    border-color: #334155;
-    color: #fff;
   }
 
   .form-label {
@@ -175,20 +219,71 @@
     padding: 0.25rem 2.25rem 0.25rem 0.5rem;
   }
 
-  .form-control:focus,
-  .form-select:focus {
-    border-color: #334155;
-    box-shadow: 0 0 0 0.2rem rgba(51, 65, 85, 0.2);
+  // 入力画面の中身(見出しと白枠)。biscuit の管理画面と同じく、幅の上限を決めて中央に寄せる(一覧は画面幅いっぱいのまま)
+  .mypage-page {
+    max-width: 80rem;
+    margin-inline: auto;
   }
 
-  .form-check-input:checked {
-    background-color: #334155;
-    border-color: #334155;
+  // 入力欄の少ない画面(パスワードの変更)は、白枠を狭くする
+  .mypage-page-narrow {
+    max-width: 36rem;
   }
 
-  .form-check-input:focus {
-    border-color: #334155;
-    box-shadow: 0 0 0 0.2rem rgba(51, 65, 85, 0.2);
+  // プロフィール画面。広い画面では、入力欄が長くなりすぎないようフォームの白枠の幅を固定し(入力欄は枠の半分)、
+  // biscuit の管理画面と同じく見出しと白枠を中央に寄せる(幅はフォームとアイコン画像の列の合計から、行の両端の余白を除いたもの)
+  @media (min-width: 1200px) {
+    .mypage-profile {
+      max-width: 53rem;
+      margin-inline: auto;
+    }
+
+    .mypage-profile-form-col {
+      flex: 0 0 auto;
+      width: 34.5rem;
+    }
+
+    .mypage-profile-image-col {
+      flex: 0 0 auto;
+      width: 20rem;
+    }
+  }
+
+  // 画像のドラッグ&ドロップ欄(components/mypage/ImageDrop.vue)。画像を重ねている間はアクセント色にする
+  .mypage-image-drop {
+    padding: 1.25rem 1rem;
+    border: 2px dashed #cbd5e1;
+    border-radius: 0.75rem;
+    color: #5f5c63;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background-color 0.15s ease;
+
+    i {
+      color: var(--mypage-text-muted);
+    }
+
+    &:hover,
+    &:focus-visible,
+    &.is-dragover {
+      border-color: var(--mypage-primary);
+      background-color: var(--mypage-hover-bg);
+      outline: none;
+
+      i {
+        color: var(--mypage-primary);
+      }
+    }
+
+    &.is-invalid {
+      border-color: var(--bs-form-invalid-border-color);
+    }
+
+    &.is-disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
   }
 
   .card {
@@ -197,9 +292,9 @@
     box-shadow: var(--mypage-shadow);
   }
 
-  // 一覧のホバー行(既定の薄い灰色は背景と見分けにくいため、淡い青にする)
+  // 一覧のホバー行(既定の薄い灰色は背景と見分けにくいため、サイドメニューのホバーと同じ色にする)
   .table-hover {
-    --bs-table-hover-bg: #dbeafe;
+    --bs-table-hover-bg: var(--mypage-hover-bg);
     --bs-table-hover-color: var(--mypage-text);
   }
 

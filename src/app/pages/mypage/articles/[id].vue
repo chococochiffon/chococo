@@ -55,7 +55,7 @@ useSeoMeta({ title: '記事の編集', robots: 'noindex' })
 </script>
 
 <template>
-  <div v-if="article">
+  <div v-if="article" class="mypage-page">
     <div class="mb-4 d-flex align-items-center justify-content-between">
       <h1 class="h5 mb-0">記事の編集</h1>
     </div>
