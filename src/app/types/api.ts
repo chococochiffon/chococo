@@ -322,6 +322,17 @@ export interface MyArticle {
   updated_at: string | null
 }
 
+// マイページから投稿したギャラリーの画像(GET /api/me/gallery-images)。公開側のギャラリー画像に、承認の状態を足したもの。
+// 公開ステータスは記事と同じ(下書き・承認待ち・公開)
+export interface MyGalleryImage extends GalleryImage {
+  approval: ArticleApproval
+  approval_label: string
+  // 管理者が下書きに戻したときの理由(承認を申請し直すと消える)
+  review_comment: string | null
+  created_at: string | null
+  updated_at: string | null
+}
+
 // 記事の投稿先(biscuit の管理者が登録した親パス。GET /api/me/article-paths)
 export interface ArticlePathOption {
   id: number
