@@ -1,23 +1,11 @@
 <script setup lang="ts">
-import { MAX_SKILL_LEVEL, type NameSetting } from '~/types/api'
+import type { NameSetting } from '~/types/api'
+import type { SkillRow } from '~/components/mypage/SkillRows.vue'
 
 // マイページのプロフィール(名前・メールアドレス・ユーザー詳細・スキル)とアイコン画像の変更
 definePageMeta({ middleware: 'auth', layout: 'mypage' })
 
 const { me } = useMe()
-
-const nameSettingOptions: { value: NameSetting, label: string }[] = [
-  { value: 1, label: '非表示' },
-  { value: 2, label: 'フルネーム' },
-  { value: 3, label: 'ニックネーム' },
-  { value: 4, label: '名前のみ' },
-]
-
-interface SkillRow {
-  id: number | null
-  name: string
-  level: number
-}
 
 // 編集中の値(保存するまで me は変えない)
 const form = reactive({
@@ -35,14 +23,6 @@ const form = reactive({
 
 const status = ref('')
 const { errors, submitting: saving, submit } = useFormSubmit()
-
-function addSkill() {
-  form.skills.push({ id: null, name: '', level: 1 })
-}
-
-function removeSkill(index: number) {
-  form.skills.splice(index, 1)
-}
 
 async function saveProfile() {
   status.value = ''
@@ -172,29 +152,7 @@ useSeoMeta({ title: 'プロフィール', robots: 'noindex' })
             </div>
 
             <div class="col-12">
-              <div class="form-label">スキル</div>
-              <div v-for="(skill, index) in form.skills" :key="skill.id ?? `new-${index}`" class="row g-2 align-items-start mb-2">
-                <div class="col-7 col-md-5">
-                  <input
-                    v-model="skill.name"
-                    type="text"
-                    class="form-control form-control-sm"
-                    :class="{ 'is-invalid': errors[`user_detail.skills.${index}.name`] }"
-                    placeholder="スキル名"
-                    aria-label="スキル名"
-                  >
-                  <div class="invalid-feedback">{{ errors[`user_detail.skills.${index}.name`] }}</div>
-                </div>
-                <div class="col-auto">
-                  <select v-model.number="skill.level" class="form-select form-select-sm" aria-label="習熟度">
-                    <option v-for="level in MAX_SKILL_LEVEL" :key="level" :value="level">{{ '★'.repeat(level) }}</option>
-                  </select>
-                </div>
-                <div class="col-auto">
-                  <button type="button" class="btn btn-outline-danger btn-sm" aria-label="削除" @click="removeSkill(index)">−</button>
-                </div>
-              </div>
-              <button type="button" class="btn btn-outline-secondary btn-sm" @click="addSkill">+ スキルを追加</button>
+              <MypageSkillRows v-model="form.skills" :errors="errors" />
             </div>
           </div>
 
