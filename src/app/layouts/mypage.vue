@@ -11,15 +11,20 @@ watch(() => route.fullPath, () => {
   sidebarOpen.value = false
 })
 
-const menu = [
-  { to: '/mypage', icon: 'bi-speedometer2', label: 'ダッシュボード', exact: true },
-  { to: '/mypage/profile', icon: 'bi-person-circle', label: 'プロフィール', exact: true },
-  { to: '/mypage/articles', icon: 'bi-file-earmark-text', label: '記事の管理', exact: false },
-  { to: '/mypage/gallery', icon: 'bi-images', label: 'ギャラリーの管理', exact: false },
-  { to: '/mypage/password', icon: 'bi-key', label: 'パスワードの変更', exact: true },
+// サイドメニューの項目。グループの間に区切り線を入れる(コンテンツの管理 → アカウント)
+const menuGroups = [
+  [
+    { to: '/mypage', icon: 'bi-speedometer2', label: 'ダッシュボード', exact: true },
+    { to: '/mypage/articles', icon: 'bi-file-earmark-text', label: '記事の管理', exact: false },
+    { to: '/mypage/gallery', icon: 'bi-images', label: 'ギャラリーの管理', exact: false },
+  ],
+  [
+    { to: '/mypage/profile', icon: 'bi-person-circle', label: 'プロフィール', exact: true },
+    { to: '/mypage/password', icon: 'bi-key', label: 'パスワードの変更', exact: true },
+  ],
 ]
 
-const isActive = (item: typeof menu[number]) => (item.exact ? route.path === item.to : route.path.startsWith(item.to))
+const isActive = (item: typeof menuGroups[number][number]) => (item.exact ? route.path === item.to : route.path.startsWith(item.to))
 
 async function onLogout() {
   await logout()
@@ -38,15 +43,17 @@ useHead({
 
       <hr class="mypage-sidebar-divider">
 
-      <ul class="nav flex-column mypage-sidebar-nav">
-        <li v-for="item in menu" :key="item.to" class="nav-item">
-          <NuxtLink :to="item.to" class="nav-link" :class="{ active: isActive(item) }" :aria-current="isActive(item) ? 'page' : undefined">
-            <i class="bi" :class="item.icon" />{{ item.label }}
-          </NuxtLink>
-        </li>
-      </ul>
+      <template v-for="(group, index) in menuGroups" :key="index">
+        <ul class="nav flex-column mypage-sidebar-nav">
+          <li v-for="item in group" :key="item.to" class="nav-item">
+            <NuxtLink :to="item.to" class="nav-link" :class="{ active: isActive(item) }" :aria-current="isActive(item) ? 'page' : undefined">
+              <i class="bi" :class="item.icon" />{{ item.label }}
+            </NuxtLink>
+          </li>
+        </ul>
 
-      <hr class="mypage-sidebar-divider">
+        <hr class="mypage-sidebar-divider">
+      </template>
 
       <div class="mypage-sidebar-heading">サイト</div>
       <ul class="nav flex-column mypage-sidebar-nav">
