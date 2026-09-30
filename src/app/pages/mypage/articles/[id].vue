@@ -5,6 +5,7 @@ import type { MyArticle } from '~/types/api'
 definePageMeta({ middleware: 'auth', layout: 'mypage' })
 
 const route = useRoute()
+const { me } = useMe()
 const flash = useState<string>('my-articles-flash', () => '')
 
 const { data: article, error } = await useFetch(`/api/me/articles/${route.params.id}`, {
@@ -76,7 +77,7 @@ useSeoMeta({ title: '記事の編集', robots: 'noindex' })
       <div class="fw-bold mb-1"><i class="bi bi-exclamation-circle me-1" />管理者から差し戻されました</div>
       <div style="white-space: pre-wrap;">{{ article.review_comment }}</div>
     </div>
-    <div v-if="article.approval === 'published'" class="alert alert-info small">
+    <div v-if="article.approval === 'published' && !me?.skip_approval" class="alert alert-info small">
       公開中の記事です。保存すると承認待ちに戻り、管理者が承認するまで公開側には表示されません。
     </div>
 

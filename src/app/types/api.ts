@@ -261,6 +261,8 @@ export interface Me {
   id: number
   name: string
   email: string
+  // 記事を管理者の承認なしで公開できるか(biscuit の管理画面で設定する)
+  skip_approval: boolean
   detail: {
     first_name: string
     family_name: string
