@@ -356,3 +356,23 @@ export interface Author {
   comment: string | null
   skills: UserSkill[]
 }
+
+// PV(表示された回数)と UU(訪問者の数)
+export interface PageViewCount {
+  views: number
+  unique_visitors: number
+}
+
+// 日別の PV・UU(date は YYYY-MM-DD)
+export interface DailyPageViews extends PageViewCount {
+  date: string
+}
+
+// マイページのダッシュボードの、自分の記事のアクセス(GET /api/me/page-views)
+export interface MyPageViews {
+  summary: Record<'today' | 'yesterday' | 'this_month' | 'total', PageViewCount>
+  // 直近 30 日(古い順)
+  daily: DailyPageViews[]
+  // 直近 30 日の人気記事(PV の多い順)
+  ranking: (PageViewCount & { article_id: number, title: string, path: string })[]
+}
