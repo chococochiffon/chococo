@@ -3,7 +3,8 @@ import type { Article, ArticlePathOption, MyArticle } from '~/types/api'
 
 // マイページの記事の作成・編集フォーム(投稿先・タイトル・スラッグ・本文・サムネイル画像・タグ)とプレビュー。
 // 保存すると、本文などの保存 → サムネイル画像の保存 → (申請するときは)承認の申請 の順に biscuit へ送り、保存後の記事を saved で返す。
-// 公開中の記事は保存すると biscuit が承認待ちに戻す(管理者が承認するまで公開側に出ない)
+// 公開中の記事は保存すると biscuit が承認待ちに戻す(管理者が承認するまで公開側に出ない)。
+// 承認を飛ばす権限のあるユーザー(me.skip_approval)は、申請するとそのまま公開になり、公開中の記事を保存しても公開中のまま
 const props = defineProps<{
   // 編集する記事(新規作成なら null)
   article: MyArticle | null
@@ -14,6 +15,7 @@ const emit = defineEmits<{
 }>()
 
 const { me } = useMe()
+const skipsApproval = computed(() => me.value?.skip_approval ?? false)
 const { data: pathOptions } = await useFetch('/api/me/article-paths', {
   key: 'my-article-paths',
   transform: (response: { data: ArticlePathOption[] }) => response.data,
@@ -91,7 +93,7 @@ const previewArticle = computed<Article>(() => ({
 }))
 
 async function save(submitAfterSave: boolean) {
-  if (approval.value === 'published' && !window.confirm('公開中の記事を保存すると承認待ちに戻り、管理者が承認するまで公開されなくなります。保存しますか?')) {
+  if (approval.value === 'published' && !skipsApproval.value && !window.confirm('公開中の記事を保存すると承認待ちに戻り、管理者が承認するまで公開されなくなります。保存しますか?')) {
     return
   }
 
@@ -128,6 +130,10 @@ function showUploadError(message: string) {
 }
 
 function savedMessage(article: MyArticle): string {
+  if (article.approval === 'published') {
+    return approval.value === 'published' ? '記事を保存しました。' : '記事を保存し、公開しました。'
+  }
+
   if (article.approval === 'pending') {
     return approval.value === 'published'
       ? '記事を保存しました。管理者が承認するまで、公開側には表示されません。'
@@ -173,10 +179,10 @@ function savedMessage(article: MyArticle): string {
             <div class="d-flex flex-wrap align-items-center gap-2">
               <template v-if="approval === 'draft'">
                 <button type="submit" class="btn btn-outline-primary" :disabled="saving">下書き保存</button>
-                <button type="button" class="btn btn-primary" :disabled="saving" @click="save(true)">保存して承認を申請</button>
+                <button type="button" class="btn btn-primary" :disabled="saving" @click="save(true)">{{ skipsApproval ? '保存して公開' : '保存して承認を申請' }}</button>
               </template>
               <button v-else-if="approval === 'pending'" type="submit" class="btn btn-primary" :disabled="saving">保存する</button>
-              <button v-else type="submit" class="btn btn-primary" :disabled="saving">保存して承認を申請し直す</button>
+              <button v-else type="submit" class="btn btn-primary" :disabled="saving">{{ skipsApproval ? '保存する' : '保存して承認を申請し直す' }}</button>
               <NuxtLink to="/mypage/articles" class="text-secondary ms-2">キャンセル</NuxtLink>
             </div>
           </div>
