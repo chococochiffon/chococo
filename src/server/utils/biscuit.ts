@@ -34,6 +34,31 @@ export function clearUserToken(event: H3Event): void {
   deleteCookie(event, USER_TOKEN_COOKIE, { path: '/' })
 }
 
+// 二段階認証の確認コードを待っているログインのチャレンジ(biscuit の POST /auth/login が返す)を入れる Cookie の名前。
+// ブラウザには渡さず、確認コードの入力・再送のときに chococo のサーバーが biscuit へ送る
+export const LOGIN_CHALLENGE_COOKIE = 'chococo_login_challenge'
+
+export function getLoginChallenge(event: H3Event): string | undefined {
+  return getCookie(event, LOGIN_CHALLENGE_COOKIE)
+}
+
+/**
+ * ログインのチャレンジを Cookie に保存する(確認コードの入力に十分な 30 分だけ残す。コードの有効期限は biscuit が決める)。
+ */
+export function setLoginChallenge(event: H3Event, challenge: string): void {
+  setCookie(event, LOGIN_CHALLENGE_COOKIE, challenge, {
+    httpOnly: true,
+    secure: !import.meta.dev,
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 30 * 60,
+  })
+}
+
+export function clearLoginChallenge(event: H3Event): void {
+  deleteCookie(event, LOGIN_CHALLENGE_COOKIE, { path: '/' })
+}
+
 /**
  * 変更系のリクエストが chococo 自身のページから送られたことを確かめる(CSRF 対策)。
  * Cookie は SameSite=Lax でほかのサイトからの POST には付かないが、Origin も公開側サイトの URL と一致するかを見る。

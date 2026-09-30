@@ -26,10 +26,19 @@ export function useMe() {
     return checked.value ? me.value : await fetchMe()
   }
 
+  // ログインは二段階: メールアドレスとパスワードで確認コードをメールで送ってもらい(login)、コードを入れてログインする(verifyLoginCode)
   async function login(email: string, password: string): Promise<void> {
-    const response = await $fetch<{ data: Me }>('/api/auth/login', { method: 'POST', body: { email, password } })
+    await $fetch('/api/auth/login', { method: 'POST', body: { email, password } })
+  }
+
+  async function verifyLoginCode(code: string): Promise<void> {
+    const response = await $fetch<{ data: Me }>('/api/auth/login-verify', { method: 'POST', body: { code } })
     me.value = response.data
     checked.value = true
+  }
+
+  async function resendLoginCode(): Promise<void> {
+    await $fetch('/api/auth/login-resend', { method: 'POST' })
   }
 
   async function logout(): Promise<void> {
@@ -37,5 +46,5 @@ export function useMe() {
     me.value = null
   }
 
-  return { me, fetchMe, ensureMe, login, logout }
+  return { me, fetchMe, ensureMe, login, verifyLoginCode, resendLoginCode, logout }
 }
