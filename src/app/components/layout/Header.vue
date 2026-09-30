@@ -22,8 +22,9 @@ await ensureMe()
         <nav class="navbar navbar-light navbar-expand-md">
           <div class="container-fluid gap-2">
             <LayoutBlockItem v-for="(block, index) in blocks" :key="index" :block="block" region="header" />
-            <NuxtLink v-if="showMyPage && me" to="/mypage" class="nav-link small text-body-secondary text-nowrap">
-              <i class="bi bi-person-circle" /> マイページ
+            <!-- アイコンと文字の縦位置を中央でそろえる(bi のアイコンは vertical-align で少し下がるため flex で並べる) -->
+            <NuxtLink v-if="showMyPage && me" to="/mypage" class="nav-link small text-body-secondary text-nowrap d-inline-flex align-items-center gap-1">
+              <i class="bi bi-person-circle lh-1" />マイページ
             </NuxtLink>
           </div>
         </nav>
