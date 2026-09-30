@@ -21,3 +21,5 @@ services:
       # ブラウザ → biscuit の API のベース URL
       - NUXT_PUBLIC_API_BASE=http://localhost/api
       - NUXT_PUBLIC_SITE_URL=http://localhost:3000
+      # PV の記録で biscuit と共有する鍵(ローカル開発用。biscuit の .env の PAGE_VIEW_FORWARD_KEY と同じ値にする)
+      - NUXT_PAGE_VIEW_KEY=local-page-view-key

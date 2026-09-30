@@ -33,6 +33,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     // SSR 時(Nuxt サーバー → biscuit)の API のベース URL。NUXT_API_BASE で上書きする
     apiBase: 'http://localhost/api',
+    // PV の記録で biscuit と共有する鍵(biscuit の PAGE_VIEW_FORWARD_KEY と同じ値)。NUXT_PAGE_VIEW_KEY で設定し、空なら PV を送らない
+    pageViewKey: '',
     public: {
       // ブラウザ → biscuit の API のベース URL。NUXT_PUBLIC_API_BASE で上書きする
       apiBase: 'http://localhost/api',

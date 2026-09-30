@@ -54,6 +54,13 @@ useSeoMeta({
   ogImage: () => (article.value ? article.value.thumbnail_url : singlePage.value?.header_image_url) || undefined,
   ogType: () => (article.value ? 'article' : 'website'),
 })
+
+// 表示できたページだけを 1 PV として記録する(404 などのエラーでは送らない。ブラウザで表示し終えたときに 1 回)
+const { $recordPageView } = useNuxtApp()
+
+onMounted(() => {
+  $recordPageView(route.path)
+})
 </script>
 
 <template>
