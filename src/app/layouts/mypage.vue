@@ -12,7 +12,8 @@ watch(() => route.fullPath, () => {
 })
 
 const menu = [
-  { to: '/mypage', icon: 'bi-person-circle', label: 'プロフィール', exact: true },
+  { to: '/mypage', icon: 'bi-speedometer2', label: 'ダッシュボード', exact: true },
+  { to: '/mypage/profile', icon: 'bi-person-circle', label: 'プロフィール', exact: true },
   { to: '/mypage/articles', icon: 'bi-file-earmark-text', label: '記事の管理', exact: false },
   { to: '/mypage/password', icon: 'bi-key', label: 'パスワードの変更', exact: true },
 ]
