@@ -42,6 +42,7 @@ const quickActions = [
 
 const warningLabels: Record<MyDashboard['warnings'][number]['key'], string> = {
   returned: '差し戻された記事・画像',
+  broken_links: 'リンク切れのある記事',
   no_thumbnail: '公開中・予約公開なのにサムネイル未設定の記事',
   pending: '承認待ちの記事・画像',
 }
@@ -201,6 +202,9 @@ useSeoMeta({ title: 'ダッシュボード', robots: 'noindex' })
                   <li v-for="item in warning.items" :key="`${item.type}-${item.id}`">
                     <NuxtLink :to="editPath(item)">{{ item.title }}</NuxtLink>
                     <span class="text-body-secondary ms-1">({{ typeLabels[item.type] }})</span>
+                    <div v-if="item.links" class="text-body-secondary text-break">
+                      <template v-for="(link, linkIndex) in item.links" :key="link"><code>{{ link }}</code><template v-if="linkIndex < item.links.length - 1">, </template></template>
+                    </div>
                   </li>
                   <li v-if="warning.count > warning.items.length" class="list-unstyled text-body-secondary">ほか {{ (warning.count - warning.items.length).toLocaleString() }}件</li>
                 </ul>
