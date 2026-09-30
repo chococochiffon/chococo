@@ -15,7 +15,7 @@ useSeoMeta({ title: '記事の作成', robots: 'noindex' })
 </script>
 
 <template>
-  <div>
+  <div class="mypage-page">
     <div class="mb-4 d-flex align-items-center justify-content-between">
       <h1 class="h5 mb-0">記事の作成</h1>
     </div>

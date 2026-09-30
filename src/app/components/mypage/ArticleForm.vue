@@ -31,7 +31,6 @@ const form = reactive({
 })
 const thumbnail = ref<File | null>(null)
 const thumbnailPreview = ref<string | null>(null)
-const thumbnailInput = ref<HTMLInputElement>()
 // 申請(approval)の入力エラー(下書きでないなど)は項目の欄がないため、フォームの上にまとめて出す
 const { errors, submitting: saving, submit } = useFormSubmit({ generalErrorFields: ['approval'] })
 const previewing = ref(false)
@@ -58,10 +57,6 @@ const previewPath = computed(() => {
 })
 
 const approval = computed(() => props.article?.approval ?? 'draft')
-
-function selectThumbnail(event: Event) {
-  setThumbnail((event.target as HTMLInputElement).files?.[0] ?? null)
-}
 
 // 選んだサムネイル画像(保存するまでは手元でプレビューする)
 function setThumbnail(file: File | null) {
@@ -117,7 +112,6 @@ async function save(submitAfterSave: boolean) {
       thumbnailBody.append('thumbnail', thumbnail.value)
       article = (await $fetch<{ data: MyArticle }>(`/api/me/articles/${article.id}/thumbnail`, { method: 'POST', body: thumbnailBody })).data
       setThumbnail(null)
-      thumbnailInput.value!.value = ''
     }
 
     if (submitAfterSave && article.approval === 'draft') {
@@ -210,8 +204,8 @@ function savedMessage(article: MyArticle): string {
             <div class="mb-3">
               <label for="my-article-thumbnail" class="form-label">サムネイル画像</label>
               <img v-if="thumbnailPreview || article?.thumbnail_url" :src="thumbnailPreview ?? article?.thumbnail_url ?? ''" alt="" class="img-fluid rounded border d-block mb-2">
-              <input id="my-article-thumbnail" ref="thumbnailInput" type="file" accept="image/*" class="form-control form-control-sm" :class="{ 'is-invalid': errors.thumbnail }" @change="selectThumbnail">
-              <div class="invalid-feedback">{{ errors.thumbnail }}</div>
+              <MypageImageDrop id="my-article-thumbnail" label="サムネイル画像を選択" :invalid="!!errors.thumbnail" @select="setThumbnail" />
+              <div v-if="errors.thumbnail" class="invalid-feedback d-block">{{ errors.thumbnail }}</div>
               <div class="form-text">1200×630px または 1280×720px のうち、比率が近い方へ中央を切り抜いて縮小します。</div>
             </div>
 

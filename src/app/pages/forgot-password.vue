@@ -24,7 +24,7 @@ useSeoMeta({ title: 'パスワードの再設定', robots: 'noindex' })
   <LayoutSidebarFrame page-type="other">
     <div class="container">
       <div class="row py-5 justify-content-center">
-        <div class="col-md-6 col-lg-5">
+        <div class="col-md-6 col-lg-5 mypage-accent">
           <SectionHeading title="Forgot Password" subtitle="パスワードの再設定" />
           <form class="card card-body shadow-sm" novalidate @submit.prevent="submit">
             <div v-if="status" class="alert alert-success small" role="status">{{ status }}</div>

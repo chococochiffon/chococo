@@ -75,27 +75,20 @@ async function saveProfile() {
 // アイコン画像は選んだらすぐに保存する(biscuit が中央で正方形に切り抜く)
 const { errors: imageErrors, submitting: uploading, submit: submitImage } = useFormSubmit({ fieldErrors: false, fallbackMessage: '画像の保存に失敗しました。' })
 
-async function uploadImage(event: Event) {
-  const file = (event.target as HTMLInputElement).files?.[0]
-
-  if (!file) {
-    return
-  }
-
+async function uploadImage(file: File) {
   await submitImage(async () => {
     const body = new FormData()
     body.append('image', file)
     const response = await $fetch<{ data: typeof me.value }>('/api/me/profile/image', { method: 'POST', body })
     me.value = response.data
   })
-  ;(event.target as HTMLInputElement).value = ''
 }
 
 useSeoMeta({ title: 'マイページ', robots: 'noindex' })
 </script>
 
 <template>
-  <div>
+  <div class="mypage-profile">
     <div class="mb-4 d-flex align-items-center justify-content-between">
       <h1 class="h5 mb-0">プロフィール</h1>
       <!-- 「プロフィールを公開する」がオンなら、公開側の投稿者ページがある -->
@@ -105,19 +98,19 @@ useSeoMeta({ title: 'マイページ', robots: 'noindex' })
     </div>
 
     <div class="row g-4">
-      <div class="col-lg-4 order-lg-2">
+      <div class="col-lg-4 mypage-profile-image-col order-lg-2">
         <div class="card card-body p-4">
           <h2 class="h6 fw-bold mb-3">アイコン画像</h2>
           <div class="text-center">
             <img v-if="me?.detail" :src="me.detail.user_image_url" alt="" class="rounded-circle border mb-3" width="128" height="128">
-            <input type="file" accept="image/*" class="form-control form-control-sm" aria-label="アイコン画像を選択" :disabled="uploading || !me?.detail" @change="uploadImage">
+            <MypageImageDrop label="アイコン画像を選択" :disabled="uploading || !me?.detail" @select="uploadImage" />
             <div class="form-text">画像は中央を正方形に切り抜いて保存します。</div>
             <div v-if="imageErrors._" class="text-danger small mt-1">{{ imageErrors._ }}</div>
           </div>
         </div>
       </div>
 
-      <div class="col-lg-8 order-lg-1">
+      <div class="col-lg-8 mypage-profile-form-col order-lg-1">
         <form class="card card-body p-4" novalidate @submit.prevent="saveProfile">
           <div v-if="status" class="alert alert-success small" role="status">{{ status }}</div>
           <div v-if="errors._" class="alert alert-danger small" role="alert">{{ errors._ }}</div>
@@ -133,49 +126,55 @@ useSeoMeta({ title: 'マイページ', robots: 'noindex' })
               <input id="me-email" v-model="form.email" type="email" class="form-control" :class="{ 'is-invalid': errors.email }" autocomplete="email" required>
               <div class="invalid-feedback">{{ errors.email }}</div>
             </div>
-            <div class="col-md-4">
+            <!-- 項目のまとまりごとに改行する(g-3 の上余白が付かないよう mt-0) -->
+            <div class="w-100 mt-0" />
+            <div class="col-md-6">
               <label for="me-family-name" class="form-label">姓</label>
               <input id="me-family-name" v-model="form.family_name" type="text" class="form-control" :class="{ 'is-invalid': errors['user_detail.family_name'] }" required>
               <div class="invalid-feedback">{{ errors['user_detail.family_name'] }}</div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
               <label for="me-first-name" class="form-label">名</label>
               <input id="me-first-name" v-model="form.first_name" type="text" class="form-control" :class="{ 'is-invalid': errors['user_detail.first_name'] }" required>
               <div class="invalid-feedback">{{ errors['user_detail.first_name'] }}</div>
             </div>
-            <div class="col-md-4">
+            <div class="w-100 mt-0" />
+            <div class="col-md-6">
               <label for="me-nick-name" class="form-label">ニックネーム</label>
               <input id="me-nick-name" v-model="form.nick_name" type="text" class="form-control" :class="{ 'is-invalid': errors['user_detail.nick_name'] }" required>
               <div class="invalid-feedback">{{ errors['user_detail.nick_name'] }}</div>
             </div>
-            <div class="col-md-4">
+            <div class="w-100 mt-0" />
+            <div class="col-md-6">
               <label for="me-birthday" class="form-label">誕生日</label>
               <input id="me-birthday" v-model="form.birthday" type="date" class="form-control" :class="{ 'is-invalid': errors['user_detail.birthday'] }" required>
               <div class="invalid-feedback">{{ errors['user_detail.birthday'] }}</div>
             </div>
-            <div class="col-md-4">
+            <div class="w-100 mt-0" />
+            <div class="col-md-6">
               <label for="me-name-settings" class="form-label">公開する名前</label>
               <select id="me-name-settings" v-model.number="form.name_settings" class="form-select" :class="{ 'is-invalid': errors['user_detail.name_settings'] }">
                 <option v-for="option in nameSettingOptions" :key="option.value" :value="option.value">{{ option.label }}</option>
               </select>
               <div class="invalid-feedback">{{ errors['user_detail.name_settings'] }}</div>
             </div>
-            <div class="col-md-4 d-flex align-items-end">
+            <div class="col-md-auto d-flex align-items-end">
               <div class="form-check mb-2">
                 <input id="me-view-flag" v-model="form.view_flag" type="checkbox" class="form-check-input">
                 <label for="me-view-flag" class="form-check-label">プロフィールを公開する</label>
               </div>
             </div>
+            <div class="w-100 mt-0" />
             <div class="col-12">
               <label for="me-comment" class="form-label">コメント</label>
-              <textarea id="me-comment" v-model="form.comment" class="form-control" rows="3" :class="{ 'is-invalid': errors['user_detail.comment'] }" />
+              <textarea id="me-comment" v-model="form.comment" class="form-control" rows="6" :class="{ 'is-invalid': errors['user_detail.comment'] }" />
               <div class="invalid-feedback">{{ errors['user_detail.comment'] }}</div>
             </div>
 
             <div class="col-12">
               <div class="form-label">スキル</div>
               <div v-for="(skill, index) in form.skills" :key="skill.id ?? `new-${index}`" class="row g-2 align-items-start mb-2">
-                <div class="col">
+                <div class="col-7 col-md-5">
                   <input
                     v-model="skill.name"
                     type="text"
