@@ -31,7 +31,7 @@ watch(() => route.fullPath, () => {
       <span class="navbar-toggler-icon" />
     </button>
     <div id="navbar" class="collapse navbar-collapse" :class="{ show: isOpen }">
-      <ul class="nav navbar-nav ms-auto mb-2">
+      <ul class="nav navbar-nav ms-auto mb-2 mb-md-0">
         <li v-for="(item, index) in block.items" :key="index" class="nav-item">
           <NuxtLink :to="item.path" class="nav-link" :class="{ active: isActive(item) }">{{ item.label }}</NuxtLink>
         </li>
