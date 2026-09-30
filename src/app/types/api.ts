@@ -391,8 +391,9 @@ export interface MyDashboard {
   recent_contents: { type: 'article' | 'gallery_image', id: number, title: string, status: ContentStatus, updated_at: string | null }[]
   // 予約公開の記事(今日・明日から 7 日以内。公開開始日時の早い順)
   scheduled: Record<'today' | 'this_week', { id: number, title: string, publish_at: string }[]>
-  // 該当があるものだけ。returned は差し戻し、no_thumbnail は公開中・予約公開なのにサムネイル未設定、pending は承認待ち
-  warnings: { key: 'returned' | 'no_thumbnail' | 'pending', count: number, items: { type: 'article' | 'gallery_image', id: number, title: string }[] }[]
+  // 該当があるものだけ。returned は差し戻し、broken_links は本文にリンク切れのある記事(links は切れているリンク)、
+  // no_thumbnail は公開中・予約公開なのにサムネイル未設定、pending は承認待ち
+  warnings: { key: 'returned' | 'broken_links' | 'no_thumbnail' | 'pending', count: number, items: { type: 'article' | 'gallery_image', id: number, title: string, links?: string[] }[] }[]
   // 自分の最近の操作(新しい順)
   recent_activities: { action: string, action_label: string, subject_type: string | null, subject_type_label: string | null, subject_label: string | null, created_at: string | null }[]
   account: { skip_approval: boolean, public_profile: boolean, profile_path: string | null, recent_logins: string[] }
