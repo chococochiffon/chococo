@@ -1,10 +1,18 @@
 <script setup lang="ts">
 import type { GalleryImage } from '~/types/api'
 
-// ギャラリー画像を正方形のタイルで並べ、クリックすると拡大表示(名前・コメント付き)する。トップのタイルリストとギャラリーページで使う
-defineProps<{
+// ギャラリー画像を正方形のタイルで並べ、クリックすると拡大表示(名前・コメント付き)する。トップのタイルリスト・ギャラリーページ・ページビルダーのギャラリーのブロックで使う。
+// 列数はスマートフォン 2・タブレット 3(columns が 3 より少なければ columns)・デスクトップ columns(既定 4)。showCaption が false ならタイルに名前を重ねない
+const props = withDefaults(defineProps<{
   images: GalleryImage[]
-}>()
+  columns?: number
+  showCaption?: boolean
+}>(), {
+  columns: 4,
+  showCaption: true,
+})
+
+const rowClass = computed(() => `row-cols-md-${Math.min(3, props.columns)} row-cols-lg-${props.columns}`)
 
 // 拡大表示中の画像(閉じているときは null)
 const selected = ref<GalleryImage | null>(null)
@@ -24,11 +32,11 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 </script>
 
 <template>
-  <div class="row g-2 g-md-3">
-    <div v-for="image in images" :key="image.id" class="col-6 col-md-4 col-lg-3" data-aos="fade-up" data-aos-delay="100">
+  <div class="row g-2 g-md-3 row-cols-2" :class="rowClass">
+    <div v-for="image in images" :key="image.id" class="col" data-aos="fade-up" data-aos-delay="100">
       <button type="button" class="tile shadow-sm rounded" :aria-label="`${image.name}を拡大表示`" @click="selected = image">
         <img :src="image.image_url" :alt="image.name" class="tile-image" loading="lazy">
-        <span class="tile-caption">{{ image.name }}</span>
+        <span v-if="showCaption" class="tile-caption">{{ image.name }}</span>
       </button>
     </div>
   </div>
