@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import type { SinglePage } from '~/types/api'
 
-// 固定ページの本文(見出し画像・タイトル・概要と、並び順どおりの詳細)
+// 固定ページの本文(見出し画像・タイトル・概要と、並び順どおりの詳細)。
+// ページビルダーで表示する固定ページは、詳細などの代わりにページビルダーの内容だけを表示する(見出しもビルダーの中で組み立てる)
 defineProps<{
   page: SinglePage
 }>()
 </script>
 
 <template>
-  <article>
+  <article v-if="page.builder">
+    <BuilderRenderer :content="page.builder" />
+  </article>
+  <article v-else>
     <section
       v-if="page.header_image_url"
       class="page-header d-flex align-items-center"

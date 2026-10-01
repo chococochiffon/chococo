@@ -1,5 +1,7 @@
 // biscuit の公開 API(/api/*)のレスポンス型
 
+import type { BuilderContent } from '~/types/builder'
+
 export interface Tag {
   id: number
   name: string
@@ -39,6 +41,8 @@ export interface SinglePage {
   path: string
   // 詳細を読み込んでいない場合(呼び出しコンテンツの一覧など)は含まれない
   details?: SinglePageDetail[]
+  // ページビルダーで表示する場合の公開中の内容(パス解決 API・プレビュー API だけが返す。使わない・未公開なら null)
+  builder?: BuilderContent | null
 }
 
 // 名前の表示設定(1: 非表示 / 2: フルネーム / 3: ニックネーム / 4: 名前のみ)
@@ -212,9 +216,10 @@ export interface Breadcrumb {
   path: string | null
 }
 
-// GET /api/resolve のレスポンス。breadcrumbs はトップでは空
+// GET /api/resolve のレスポンス(ページビルダーのプレビュー GET /api/builder-previews/{id} も同じ形)。breadcrumbs はトップでは空。
+// トップの builder はサイト設定でページビルダーを使う場合の公開中の内容(使わない・未公開なら null)
 export type ResolveResponse = { breadcrumbs: Breadcrumb[] } & (
-  | { type: 'top', data: null, call_contents: CallContent[] }
+  | { type: 'top', data: null, builder: BuilderContent | null, call_contents: CallContent[] }
   | { type: 'article', data: Article, call_contents: CallContent[] }
   | { type: 'single_page', data: SinglePage, call_contents: CallContent[] }
   | { type: 'custom_page_list', data: null, custom_page_type: CustomPageType, call_contents: CallContent[] }

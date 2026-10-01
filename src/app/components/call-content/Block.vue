@@ -13,6 +13,11 @@ const userDetails = computed(() => (content.value.kind === 'user_details' ? cont
 const galleryImages = computed(() => (content.value.kind === 'gallery_images' ? content.value.items : []))
 const questionAnswers = computed(() => (content.value.kind === 'question_answers' ? content.value.items : []))
 const linkItems = computed(() => toLinkItems(content.value))
+// 原文枠の固定ページが、表示中のページビルダーで表示する固定ページなら、そのビルダーの内容を使う(PageResolved が渡す)
+const builderSinglePage = inject(builderSinglePageKey, null)
+const originalSinglePage = computed(() =>
+  singlePages.value[0] && builderSinglePage?.value?.id === singlePages.value[0].id ? builderSinglePage.value : singlePages.value[0],
+)
 // 記事型のカスタムページのアーカイブは、記事一覧ではなく種類の一覧へ案内する
 const customPageType = computed(() => customPageTypeOf(props.callContent))
 </script>
@@ -20,7 +25,7 @@ const customPageType = computed(() => customPageTypeOf(props.callContent))
 <template>
   <template v-if="callContent.call_type === 'original_text'">
     <PageArticleBody v-if="articles[0]" :article="articles[0]" />
-    <PageSinglePageBody v-else-if="singlePages[0]" :page="singlePages[0]" />
+    <PageSinglePageBody v-else-if="originalSinglePage" :page="originalSinglePage" />
   </template>
   <CallContentShortSentence
     v-else-if="callContent.call_type === 'short_sentence' && singlePages.length"
