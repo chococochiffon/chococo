@@ -175,6 +175,16 @@ export function builderImageUrl(value: unknown): string | null {
 }
 
 /**
+ * 動画のブロックの埋め込み用の URL として出してよい URL(biscuit が組み立てた YouTube(Cookie を使わない)・Vimeo の形だけ)。それ以外は null。
+ */
+export function builderVideoEmbedUrl(value: unknown): string | null {
+  if (typeof value !== 'string') {
+    return null
+  }
+  return /^https:\/\/(?:www\.youtube-nocookie\.com\/embed\/[A-Za-z0-9_-]{11}|player\.vimeo\.com\/video\/\d{1,12})$/.test(value) ? value : null
+}
+
+/**
  * ページビルダーで表示する固定ページ。呼び出しコンテンツの「原文」の枠(呼び出しコンテンツ API の固定ページはビルダーの内容を持たない)で、
  * 表示中の固定ページのビルダーの内容を使うために、パス解決のページ(pages/[...slug].vue)から渡す。
  */
