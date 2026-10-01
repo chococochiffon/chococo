@@ -109,6 +109,8 @@ export function builderCss(content: BuilderContent): string {
     for (const node of children ?? []) {
       nodes.push(node)
       walk(node.children)
+      // グローバルコンポーネントの中身は data.children に入っている
+      walk(builderGlobalChildren(node))
     }
   }
   walk(content.children)
@@ -120,6 +122,14 @@ export function builderCss(content: BuilderContent): string {
   })
 
   return [...base, ...responsive].join('')
+}
+
+/**
+ * グローバルコンポーネントのブロック(global)の中身のノード(biscuit がコンポーネントの公開中の内容を data.children に入れる)。
+ * ほかの種類・中身がなければ空。
+ */
+export function builderGlobalChildren(node: BuilderNode): BuilderNode[] {
+  return node.type === 'global' && Array.isArray(node.data?.children) ? node.data.children as BuilderNode[] : []
 }
 
 /**
