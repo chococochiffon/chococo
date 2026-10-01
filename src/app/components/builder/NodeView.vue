@@ -13,6 +13,7 @@ import BuilderSpacer from './blocks/Spacer.vue'
 import BuilderDivider from './blocks/Divider.vue'
 import BuilderArticleList from './blocks/ArticleList.vue'
 import BuilderNavigation from './blocks/Navigation.vue'
+import BuilderBreadcrumb from './blocks/Breadcrumb.vue'
 
 // ノード 1 つを、種類(type)に対応する部品で描く。子は各部品がこの部品で再帰的に描く。
 // 種類 → 部品の対応表に足すだけで、ブロックの種類を増やせる(biscuit の BlockRegistry にも同じ種類を足す)。
@@ -34,6 +35,7 @@ const blocks: Record<string, Component> = {
   'divider': BuilderDivider,
   'article-list': BuilderArticleList,
   'navigation': BuilderNavigation,
+  'breadcrumb': BuilderBreadcrumb,
 }
 
 const block = computed(() => blocks[props.node.type])
