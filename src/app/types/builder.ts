@@ -15,7 +15,7 @@ export interface BuilderNode {
   responsive?: Partial<Record<BuilderDevice, BuilderStyles>>
   // 中にブロックを置ける種類(section・container・row・column)だけが持つ
   children?: BuilderNode[]
-  // CMS のデータを表示するブロックだけが持つ、biscuit が取得の条件どおりに入れたデータ(記事一覧は articles)
+  // CMS のデータを表示するブロックだけが持つ、biscuit が取得の条件どおりに入れたデータ(記事一覧は articles、ナビゲーションは items)
   data?: Record<string, unknown>
 }
 
