@@ -1,5 +1,5 @@
 import type { ComputedRef, InjectionKey } from 'vue'
-import type { SinglePage } from '~/types/api'
+import type { Breadcrumb, SinglePage } from '~/types/api'
 import type { BuilderContent, BuilderDevice, BuilderNode, BuilderStyles } from '~/types/builder'
 
 // ページビルダーの内容を描くための共通の処理。
@@ -179,3 +179,8 @@ export function builderImageUrl(value: unknown): string | null {
  * 表示中の固定ページのビルダーの内容を使うために、パス解決のページ(pages/[...slug].vue)から渡す。
  */
 export const builderSinglePageKey: InjectionKey<ComputedRef<SinglePage | null>> = Symbol('builderSinglePage')
+
+/**
+ * 表示しているページのパンくず(パンくずのブロック用)。パス解決のページ・プレビュー(PageResolved)から渡す。
+ */
+export const builderBreadcrumbsKey: InjectionKey<ComputedRef<Breadcrumb[]>> = Symbol('builderBreadcrumbs')

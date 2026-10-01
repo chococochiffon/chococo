@@ -26,6 +26,8 @@ const singlePage = computed(() => (props.page.type === 'single_page' ? props.pag
 
 // 原文枠の固定ページ(呼び出しコンテンツ API の固定ページはビルダーの内容を持たない)にも、表示中の固定ページのビルダーの内容を使う
 provide(builderSinglePageKey, computed(() => (singlePage.value?.builder ? singlePage.value : null)))
+// ページビルダーのパンくずのブロックは、表示しているページのパンくずを並べる
+provide(builderBreadcrumbsKey, computed(() => props.page.breadcrumbs))
 
 // サイドバーの位置は、表示するページの種類(カスタムページは記事型を記事・固定ページ型を固定ページ、カスタムページの一覧はその他)で選ぶ
 const layoutPageType = computed<LayoutPageType>(() =>
