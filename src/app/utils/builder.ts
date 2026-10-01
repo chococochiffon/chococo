@@ -139,6 +139,14 @@ export function builderInt(node: BuilderNode, name: string, min: number, max: nu
 }
 
 /**
+ * props の真偽値(なければ既定値)。
+ */
+export function builderBool(node: BuilderNode, name: string, fallback: boolean): boolean {
+  const value = node.props[name]
+  return typeof value === 'boolean' ? value : fallback
+}
+
+/**
  * props の選択肢(選択肢にない・なければ既定値)。
  */
 export function builderEnum<T extends string>(node: BuilderNode, name: string, options: readonly T[], fallback: T): T {
