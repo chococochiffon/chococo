@@ -120,8 +120,8 @@ export function builderCss(content: BuilderContent): string {
     for (const node of children ?? []) {
       nodes.push(node)
       walk(node.children)
-      // グローバルコンポーネントの中身は data.children に入っている
-      walk(builderGlobalChildren(node))
+      // コンポーネント(グローバル・独自)の中身は data.children に入っている
+      walk(builderComponentChildren(node))
     }
   }
   walk(content.children)
@@ -179,11 +179,11 @@ export function builderThemeFontHrefs(theme: BuilderTheme | undefined): string[]
 }
 
 /**
- * グローバルコンポーネントのブロック(global)の中身のノード(biscuit がコンポーネントの公開中の内容を data.children に入れる)。
- * ほかの種類・中身がなければ空。
+ * コンポーネントのブロック(global・custom)の中身のノード(biscuit がグローバルコンポーネントは公開中の内容を、
+ * 独自コンポーネントは公開中の内容に差し替えた値を当てはめたものを data.children に入れる)。ほかの種類・中身がなければ空。
  */
-export function builderGlobalChildren(node: BuilderNode): BuilderNode[] {
-  return node.type === 'global' && Array.isArray(node.data?.children) ? node.data.children as BuilderNode[] : []
+export function builderComponentChildren(node: BuilderNode): BuilderNode[] {
+  return (node.type === 'global' || node.type === 'custom') && Array.isArray(node.data?.children) ? node.data.children as BuilderNode[] : []
 }
 
 /**

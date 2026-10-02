@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { BuilderNode } from '~/types/builder'
 
-// グローバルコンポーネント: biscuit が data.children に入れた、参照するコンポーネントの公開中の内容(セクションの並び)を、
+// 独自コンポーネント: biscuit が data.children に入れた、部品の公開中の内容に差し替えた値(見出しの文字・画像など)を当てはめたブロックを、
 // ページのほかのブロックと同じ部品で描く(スタイルは builderCss() が data.children もたどって出す)。中身がなければ何も出さない
 const props = defineProps<{
   node: BuilderNode
@@ -11,7 +11,7 @@ const children = computed(() => builderComponentChildren(props.node))
 </script>
 
 <template>
-  <div class="builder-global">
+  <div class="builder-custom">
     <BuilderNodeView v-for="child in children" :key="child.id" :node="child" />
   </div>
 </template>

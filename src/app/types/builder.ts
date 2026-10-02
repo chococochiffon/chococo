@@ -21,7 +21,7 @@ export interface BuilderNode {
   // 中にブロックを置ける種類(section・container・row・column)だけが持つ
   children?: BuilderNode[]
   // CMS のデータを表示するブロックだけが持つ、biscuit が取得の条件どおりに入れたデータ(記事一覧は articles、ナビゲーションは items、ギャラリーは images、動画は embed_url、
-  // グローバルコンポーネントは children(コンポーネントの公開中の内容のノード))
+  // グローバルコンポーネントは children(コンポーネントの公開中の内容のノード)、独自コンポーネントは children(差し替えた値を当てはめた部品のノード))
   data?: Record<string, unknown>
 }
 
