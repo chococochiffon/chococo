@@ -16,6 +16,7 @@ import BuilderNavigation from './blocks/Navigation.vue'
 import BuilderBreadcrumb from './blocks/Breadcrumb.vue'
 import BuilderGallery from './blocks/Gallery.vue'
 import BuilderVideo from './blocks/Video.vue'
+import BuilderSlider from './blocks/Slider.vue'
 import BuilderGlobal from './blocks/Global.vue'
 
 // ノード 1 つを、種類(type)に対応する部品で描く。子は各部品がこの部品で再帰的に描く。
@@ -41,6 +42,7 @@ const blocks: Record<string, Component> = {
   'breadcrumb': BuilderBreadcrumb,
   'gallery': BuilderGallery,
   'video': BuilderVideo,
+  'slider': BuilderSlider,
   'global': BuilderGlobal,
 }
 

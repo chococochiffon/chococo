@@ -1,14 +1,23 @@
 <script setup lang="ts">
-import type { TopSliderImage } from '~/types/api'
-
-// トップのスライダー。画像をフェードで自動的に切り替え、前後ボタン・インジケーターでも切り替えられる。
-// リンク先 URL がある画像はクリックでそのページへ移動する
-const props = defineProps<{
-  slides: TopSliderImage[]
-}>()
-
-// 自動で切り替える間隔(ミリ秒)
-const INTERVAL = 5000
+// 画像のスライダー(トップのスライダーと、ページビルダーのスライダーのブロック)。画像をフェードで自動的に切り替え、
+// 前後ボタン・インジケーターでも切り替えられる。リンク先 URL がある画像はクリックでそのページへ移動する。
+// 親の要素いっぱいに広がるため、親で大きさ(縦横比)を決める
+const props = withDefaults(defineProps<{
+  slides: { id: number | string, image_url: string, url: string | null, alt?: string }[]
+  // 読み上げ用のスライダーの名前
+  label?: string
+  // 自動で切り替える間隔(ミリ秒)
+  interval?: number
+  autoplay?: boolean
+  controls?: boolean
+  indicators?: boolean
+}>(), {
+  label: 'トップスライダー',
+  interval: 5000,
+  autoplay: true,
+  controls: true,
+  indicators: true,
+})
 
 const current = ref(0)
 let timer: ReturnType<typeof setInterval> | undefined
@@ -23,11 +32,11 @@ function stop() {
   timer = undefined
 }
 
-// 画像が2枚以上あり、視差効果を減らす設定になっていない場合だけ自動で切り替える
+// 自動で切り替える設定で、画像が2枚以上あり、視差効果を減らす設定になっていない場合だけ自動で切り替える
 function start() {
   stop()
-  if (props.slides.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
-  timer = setInterval(() => show(current.value + 1), INTERVAL)
+  if (!props.autoplay || props.slides.length < 2 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  timer = setInterval(() => show(current.value + 1), props.interval)
 }
 
 // 手動で切り替えたときは、その画像から改めて間隔を数え直す
@@ -45,7 +54,7 @@ onBeforeUnmount(stop)
     class="top-slider"
     role="region"
     aria-roledescription="carousel"
-    aria-label="トップスライダー"
+    :aria-label="label"
     @mouseenter="stop"
     @mouseleave="start"
     @focusin="stop"
@@ -62,19 +71,21 @@ onBeforeUnmount(stop)
       :aria-hidden="index !== current"
     >
       <a v-if="slide.url" :href="slide.url" class="d-block h-100" :tabindex="index === current ? 0 : -1">
-        <img :src="slide.image_url" alt="" class="top-slider-image" :loading="index === 0 ? 'eager' : 'lazy'">
+        <img :src="slide.image_url" :alt="slide.alt ?? ''" class="top-slider-image" :loading="index === 0 ? 'eager' : 'lazy'">
       </a>
-      <img v-else :src="slide.image_url" alt="" class="top-slider-image" :loading="index === 0 ? 'eager' : 'lazy'">
+      <img v-else :src="slide.image_url" :alt="slide.alt ?? ''" class="top-slider-image" :loading="index === 0 ? 'eager' : 'lazy'">
     </div>
 
     <template v-if="slides.length > 1">
-      <button type="button" class="top-slider-control top-slider-control-prev" aria-label="前の画像" @click="select(current - 1)">
-        <i class="bi bi-chevron-left" aria-hidden="true" />
-      </button>
-      <button type="button" class="top-slider-control top-slider-control-next" aria-label="次の画像" @click="select(current + 1)">
-        <i class="bi bi-chevron-right" aria-hidden="true" />
-      </button>
-      <div class="top-slider-indicators">
+      <template v-if="controls">
+        <button type="button" class="top-slider-control top-slider-control-prev" aria-label="前の画像" @click="select(current - 1)">
+          <i class="bi bi-chevron-left" aria-hidden="true" />
+        </button>
+        <button type="button" class="top-slider-control top-slider-control-next" aria-label="次の画像" @click="select(current + 1)">
+          <i class="bi bi-chevron-right" aria-hidden="true" />
+        </button>
+      </template>
+      <div v-if="indicators" class="top-slider-indicators">
         <button
           v-for="(slide, index) in slides"
           :key="slide.id"
