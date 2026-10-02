@@ -28,4 +28,19 @@ export interface BuilderNode {
 export interface BuilderContent {
   version: number
   children: BuilderNode[]
+  // テーマ(biscuit が公開側に返す内容にだけ入れる。色は名前 → #rrggbb)
+  theme?: BuilderTheme
+}
+
+// テーマのフォント(Google Fonts。family は CSS の font-family、href は読み込む CSS)
+export interface BuilderThemeFont {
+  key: string
+  family: string
+  href: string
+}
+
+// ページビルダーのテーマ(biscuit の PageBuilderTheme::toPresentation())。ビルダーのブロックにだけ効く
+export interface BuilderTheme {
+  colors: Record<string, string>
+  fonts: { heading: BuilderThemeFont | null, body: BuilderThemeFont | null }
 }
