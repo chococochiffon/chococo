@@ -1,6 +1,6 @@
 import type { ComputedRef, InjectionKey } from 'vue'
 import type { Breadcrumb, SinglePage } from '~/types/api'
-import type { BuilderContent, BuilderDevice, BuilderNode, BuilderStyles, BuilderVisibilityDevice } from '~/types/builder'
+import type { BuilderContent, BuilderDevice, BuilderNode, BuilderStyles, BuilderTheme, BuilderVisibilityDevice } from '~/types/builder'
 
 // ページビルダーの内容を描くための共通の処理。
 // 値は biscuit が保存時に検証しているが、ここでも許した形のものだけを出す(二重の守り)
@@ -23,7 +23,11 @@ const BUILDER_DEVICE_RANGES: Record<BuilderVisibilityDevice, string> = {
 
 // スタイルの値の形(biscuit の StyleRegistry と同じ)
 const LENGTH = /^(?:0|auto|\d{1,4}(?:\.\d{1,2})?(?:px|rem|em|%|vh|vw))$/
-const COLOR = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/
+const COLOR = /^(?:#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})|theme:(?:primary|secondary|accent|text|light))$/
+const HEX_COLOR = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/
+// テーマのフォントの font-family と、読み込む CSS の URL(biscuit の ThemeRegistry が組み立てた形だけ)
+const FONT_FAMILY = /^[A-Za-z0-9 ,'-]+$/
+const FONT_HREF = /^https:\/\/fonts\.googleapis\.com\/css2\?family=[A-Za-z0-9+:;@,.]+&display=swap$/
 const NUMBER = /^\d(?:\.\d{1,2})?$/
 
 const STYLE_KINDS: Record<string, RegExp | string[]> = {
@@ -99,7 +103,7 @@ function styleRules(node: BuilderNode, styles: BuilderStyles | undefined): strin
     const selector = `.${builderClass(node)}${STYLE_TARGETS[node.type]?.[name] ?? ''}`
     const properties = STYLE_PROPERTIES[node.type]?.[name] ?? [kebab(name)]
     const list = declarations.get(selector) ?? []
-    list.push(...properties.map(property => (property.includes(':') ? property : `${property}:${value}`)))
+    list.push(...properties.map(property => (property.includes(':') ? property : `${property}:${builderCssValue(value)}`)))
     declarations.set(selector, list)
   }
 
@@ -135,6 +139,43 @@ export function builderCss(content: BuilderContent): string {
   })
 
   return [...base, ...responsive, ...hidden].join('')
+}
+
+/**
+ * スタイルの値を CSS の値にする(テーマの色 theme:名前 は CSS の変数 --builder-theme-名前 に。ほかはそのまま)。
+ */
+export function builderCssValue(value: string): string {
+  return value.startsWith('theme:') ? `var(--builder-theme-${value.slice('theme:'.length)})` : value
+}
+
+/**
+ * テーマを、ビルダーの要素に置く CSS の変数にする(許した形の値だけ)。フォントは選んだものだけ。
+ */
+export function builderThemeVariables(theme: BuilderTheme | undefined): Record<string, string> {
+  const variables: Record<string, string> = {}
+
+  for (const [name, value] of Object.entries(theme?.colors ?? {})) {
+    if (/^[a-z]+$/.test(name) && HEX_COLOR.test(value)) {
+      variables[`--builder-theme-${name}`] = value
+    }
+  }
+
+  for (const part of ['heading', 'body'] as const) {
+    const font = theme?.fonts?.[part]
+    if (font && FONT_FAMILY.test(font.family)) {
+      variables[`--builder-theme-${part}-font`] = font.family
+    }
+  }
+
+  return variables
+}
+
+/**
+ * テーマのフォントの読み込む CSS の URL(許した形のものだけ。同じものは 1 つに)。
+ */
+export function builderThemeFontHrefs(theme: BuilderTheme | undefined): string[] {
+  const hrefs = [theme?.fonts?.heading?.href, theme?.fonts?.body?.href].filter((href): href is string => typeof href === 'string' && FONT_HREF.test(href))
+  return [...new Set(hrefs)]
 }
 
 /**
