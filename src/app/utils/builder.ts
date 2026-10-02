@@ -1,6 +1,6 @@
 import type { ComputedRef, InjectionKey } from 'vue'
 import type { Breadcrumb, SinglePage } from '~/types/api'
-import type { BuilderContent, BuilderDevice, BuilderNode, BuilderStyles } from '~/types/builder'
+import type { BuilderContent, BuilderDevice, BuilderNode, BuilderStyles, BuilderVisibilityDevice } from '~/types/builder'
 
 // ページビルダーの内容を描くための共通の処理。
 // 値は biscuit が保存時に検証しているが、ここでも許した形のものだけを出す(二重の守り)
@@ -11,6 +11,13 @@ export const BUILDER_SUPPORTED_VERSION = 1
 // 端末ごとのスタイルを効かせる画面幅(Bootstrap のブレイクポイントに合わせる。スマートフォンにはタブレットの上書きも効く)
 const BUILDER_MEDIA_QUERIES: Record<BuilderDevice, string> = {
   tablet: '(max-width: 991.98px)',
+  mobile: '(max-width: 767.98px)',
+}
+
+// 表示条件の「表示しない端末」を隠す画面幅(端末ごとに重ならないようにする)
+const BUILDER_DEVICE_RANGES: Record<BuilderVisibilityDevice, string> = {
+  desktop: '(min-width: 992px)',
+  tablet: '(min-width: 768px) and (max-width: 991.98px)',
   mobile: '(max-width: 767.98px)',
 }
 
@@ -100,7 +107,7 @@ function styleRules(node: BuilderNode, styles: BuilderStyles | undefined): strin
 }
 
 /**
- * 内容のすべてのブロックのスタイルを、1 つの CSS にする。
+ * 内容のすべてのブロックのスタイルと、表示しない端末で隠す規則を、1 つの CSS にする。
  * 端末ごとの上書きはインラインの style では書けないため、デスクトップの値も含めてこの CSS で効かせる(あとの規則ほど優先される)。
  */
 export function builderCss(content: BuilderContent): string {
@@ -121,7 +128,13 @@ export function builderCss(content: BuilderContent): string {
     return rules.length ? `@media ${BUILDER_MEDIA_QUERIES[device]}{${rules.join('')}}` : ''
   })
 
-  return [...base, ...responsive].join('')
+  // 表示しない端末: その端末の画面幅のときだけ隠す(Bootstrap の .row などの display より優先する)
+  const hidden = (Object.keys(BUILDER_DEVICE_RANGES) as BuilderVisibilityDevice[]).map((device) => {
+    const selectors = nodes.filter(node => node.visibility?.hideOn?.includes(device)).map(node => `.${builderClass(node)}`)
+    return selectors.length ? `@media ${BUILDER_DEVICE_RANGES[device]}{${selectors.join(',')}{display:none!important}}` : ''
+  })
+
+  return [...base, ...responsive, ...hidden].join('')
 }
 
 /**
