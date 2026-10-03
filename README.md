@@ -2,6 +2,8 @@
 
 [biscuit](https://github.com/chococochiffon/biscuit) の公開 API からデータを取得して表示する、公開側サイト（Nuxt 4）です。
 
+本番では、biscuit のインストーラー（`install.sh`）が biscuit と同じ番号のタグ（`v1.0.0` など）を取得して立ち上げます。
+
 ## 実行と終了
 
 先に biscuit を起動しておきます（`http://localhost/api` で API が応答する状態）。
@@ -54,3 +56,7 @@ docker compose down
 - ESLint（`@nuxt/eslint`。設定は `src/eslint.config.mjs`、書式も ESLint で揃える）は `src` で `npm run lint`、自動修正は `npm run lint:fix`。
 - コンテナの `node_modules` はホストと共有しない（匿名ボリューム）。`package.json` の依存関係を変えたら、`docker compose up --build -V` で作り直す（または `docker compose exec nuxt-app npm install`）。
 - Docker で起動中にページファイル（`src/app/pages/`）や部品（`src/app/components/`）、サーバー API（`src/server/`）を追加した場合は、`docker compose restart` でルート・部品を読み込み直す。部品を追加して再起動しないと、サーバー側では表示されても、ブラウザ側で「Failed to resolve component」の警告が出て表示が消えることがある。
+
+## ライセンス
+
+[MIT License](LICENSE)

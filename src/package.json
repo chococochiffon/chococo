@@ -1,5 +1,7 @@
 {
-  "name": "nuxt-app",
+  "name": "chococo",
+  "version": "1.0.0",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "engines": {
