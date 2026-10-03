@@ -15,7 +15,8 @@ if (!supported.value) {
   console.warn(`ページビルダーの内容の版(${props.content.version})に対応していないため、表示しません。`)
 }
 
-const css = computed(() => (supported.value ? builderCss(props.content) : ''))
+// ブロックのスタイルのあとに Custom CSS(.page-builder の中にネスト)を続け、Custom CSS でブロックのスタイルを上書きできるようにする
+const css = computed(() => (supported.value ? builderCss(props.content) + builderCustomCss(props.content) : ''))
 // テーマ(色・フォント)は CSS の変数にしてビルダーの要素に置き、ビルダーのブロックにだけ効かせる
 const themeStyle = computed(() => builderThemeVariables(props.content.theme))
 const fontLinks = computed(() => builderThemeFontHrefs(props.content.theme).map(href => ({ key: `builder-font-${href}`, rel: 'stylesheet' as const, href })))

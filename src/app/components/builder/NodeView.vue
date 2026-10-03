@@ -52,5 +52,5 @@ const block = computed(() => blocks[props.node.type])
 </script>
 
 <template>
-  <component :is="block" v-if="block" :node="node" :class="builderClass(node)" />
+  <component :is="block" v-if="block" :node="node" :class="[builderClass(node), ...builderNodeClasses(node)]" />
 </template>
