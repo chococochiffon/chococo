@@ -16,6 +16,8 @@ export interface BuilderNode {
   props: Record<string, unknown>
   styles: BuilderStyles
   responsive?: Partial<Record<BuilderDevice, BuilderStyles>>
+  // 追加のクラス名(Custom CSS から狙う)
+  classes?: string[]
   // 表示条件。公開側には表示しない端末(hideOn)だけが届く(表示する期間の外のブロックは biscuit が取り除いて返す)
   visibility?: { hideOn?: BuilderVisibilityDevice[] }
   // 中にブロックを置ける種類(section・container・row・column)だけが持つ
@@ -30,6 +32,8 @@ export interface BuilderContent {
   children: BuilderNode[]
   // テーマ(biscuit が公開側に返す内容にだけ入れる。色は名前 → #rrggbb)
   theme?: BuilderTheme
+  // ページの Custom CSS(.page-builder の中にネストして効かせる)
+  css?: string
 }
 
 // テーマのフォント(Google Fonts。family は CSS の font-family、href は読み込む CSS)
@@ -43,4 +47,6 @@ export interface BuilderThemeFont {
 export interface BuilderTheme {
   colors: Record<string, string>
   fonts: { heading: BuilderThemeFont | null, body: BuilderThemeFont | null }
+  // サイト共通の Custom CSS
+  css?: string | null
 }
