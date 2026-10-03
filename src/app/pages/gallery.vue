@@ -60,6 +60,11 @@ useSeoMeta({
         <div v-if="filteredImages.length" class="col-lg-12">
           <GalleryTiles :key="selectedCategoryId ?? 'all'" :images="filteredImages" />
         </div>
+        <!-- 画像が 1 枚もないときは、見本の画像を並べる(分類で絞り込んで 0 枚のときは出さない) -->
+        <div v-else-if="!images?.length" class="col-lg-12">
+          <p class="text-center text-body-secondary small">ギャラリーの画像はまだありません。見本の画像を表示しています。</p>
+          <GalleryTiles :images="SAMPLE_GALLERY_IMAGES" />
+        </div>
         <p v-else class="col-lg-12 text-center text-body-secondary">ギャラリーの画像はまだありません。</p>
       </div>
     </div>

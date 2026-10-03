@@ -1,8 +1,16 @@
 <script setup lang="ts">
 // トップのメインビジュアル。サイト設定のトップスライダー画像(16:9)があればそれを切り替えて表示する。
 // スライダー画像は文字入りのバナーを想定しているため、タイトル・説明は重ねない。
-// 未登録の場合は既定の画像にタイトル・説明を重ねて表示する(サイト設定のサイト画像は OGP 用なので使わない)
+// 未登録の場合は既定の画像(public/image/header/)を切り替えて、タイトル・説明を重ねて表示する(サイト設定のサイト画像は OGP 用なので使わない)。
+// トップにページビルダーを使うときは、ビルダーの内容がサイト名などを出すため、既定の画像とタイトルは出さない(fallback が false)
+withDefaults(defineProps<{
+  fallback?: boolean
+}>(), {
+  fallback: true,
+})
+
 const { data: siteSetting } = await useSiteSetting()
+const defaultSlides = DEFAULT_HEADER_IMAGES.map((imageUrl, index) => ({ id: `default-${index}`, image_url: imageUrl, url: null }))
 
 const siteTitle = computed(() => siteSetting.value?.site_title || 'Chococo Chiffon')
 const slides = computed(() => siteSetting.value?.top_slider_images ?? [])
@@ -14,13 +22,11 @@ const slides = computed(() => siteSetting.value?.top_slider_images ?? [])
       <TopSlider :slides="slides" />
     </div>
   </section>
-  <section v-else class="top-hero top-hero-fallback d-flex align-items-center">
-    <div class="container f-edging-text" data-aos="zoom-out" data-aos-delay="100">
+  <section v-else-if="fallback" class="top-hero top-hero-fallback d-flex align-items-center">
+    <TopSlider :slides="defaultSlides" :controls="false" />
+    <div class="container top-hero-text f-edging-text" data-aos="zoom-out" data-aos-delay="100">
       <h2>{{ siteTitle }}</h2>
       <p v-if="siteSetting?.description" class="hero-description">{{ siteSetting.description }}</p>
-      <div class="d-flex">
-        <a href="#contents" class="btn-get-started">Get Started</a>
-      </div>
     </div>
   </section>
 </template>
@@ -46,10 +52,14 @@ const slides = computed(() => siteSetting.value?.top_slider_images ?? [])
   max-height: none;
   margin-inline: auto;
 }
-/* 既定の画像ではタイトル・説明を重ねるため、小さい画面でも高さを確保する */
+/* 既定の画像(2048×768 の JPEG)ではタイトル・説明を重ねるため、小さい画面でも高さを確保する */
 .top-hero-fallback {
+  aspect-ratio: 8 / 3;
   min-height: 320px;
-  background: url('/image/header/ffxiv_20220617_010514_782.png') center center / cover;
+}
+.top-hero-text {
+  position: relative;
+  z-index: 1;
 }
 .hero-description {
   font-size: 1rem;
@@ -59,9 +69,5 @@ const slides = computed(() => siteSetting.value?.top_slider_images ?? [])
   -webkit-line-clamp: 3;
   line-clamp: 3;
   overflow: hidden;
-}
-.btn-get-started {
-  color: #ff6800;
-  text-decoration: none;
 }
 </style>

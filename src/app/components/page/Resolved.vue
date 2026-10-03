@@ -49,8 +49,8 @@ useSeoMeta({
   <LayoutSidebarFrame :page-type="layoutPageType" :breadcrumbs="page.breadcrumbs">
     <div>
       <template v-if="page.type === 'top'">
-        <TopHero />
-        <!-- トップのページビルダー(サイト設定で使う場合)はスライダーの下に表示する -->
+        <!-- トップのページビルダー(サイト設定で使う場合)はスライダーの下に表示する。ビルダーを使うときは、スライダー画像が未登録でも既定の画像とサイト名は出さない(ビルダーの内容と二重になるため) -->
+        <TopHero :fallback="!page.builder" />
         <BuilderRenderer v-if="page.builder" :content="page.builder" />
       </template>
       <CustomPageList v-else-if="page.type === 'custom_page_list'" :custom-page-type="page.custom_page_type" />
