@@ -3,7 +3,21 @@
 // (各ページで useSeoMeta を呼べば、そちらの値で上書きされる)
 const config = useRuntimeConfig()
 const route = useRoute()
-const { data: siteSetting } = await useSiteSetting()
+const { data: siteSetting, error: siteSettingError } = await useSiteSetting()
+
+// biscuit のインストール中(API が 503)は、作りかけのサイトを見せずに「準備中」を出す(検索エンジンにも載せず、503 を返す)。
+// ページビルダーのプレビューは署名付きで API を読めるため、ふだんどおり表示する
+const preparing = computed(() => siteSettingError.value?.statusCode === 503)
+
+if (preparing.value) {
+  const event = useRequestEvent()
+
+  if (event) {
+    setResponseStatus(event, 503, 'Service Unavailable')
+  }
+
+  useSeoMeta({ robots: 'noindex, nofollow' })
+}
 
 const siteTitle = computed(() => siteSetting.value?.site_title || 'Chococo Chiffon')
 
@@ -23,7 +37,8 @@ useSeoMeta({
 </script>
 
 <template>
-  <NuxtLayout>
+  <SitePreparing v-if="preparing" />
+  <NuxtLayout v-else>
     <NuxtPage />
   </NuxtLayout>
 </template>

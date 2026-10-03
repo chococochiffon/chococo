@@ -6,6 +6,8 @@ const props = defineProps<{
 }>()
 
 const isNotFound = computed(() => props.error.statusCode === 404)
+// biscuit のインストール中(API が 503)に、ページの取得で止まったとき(app.vue より先にページの取得が失敗した場合など)
+const isPreparing = computed(() => props.error.statusCode === 503)
 
 useSeoMeta({
   title: () => (isNotFound.value ? 'ページが見つかりません' : 'エラーが発生しました'),
@@ -13,7 +15,8 @@ useSeoMeta({
 </script>
 
 <template>
-  <NuxtLayout>
+  <SitePreparing v-if="isPreparing" />
+  <NuxtLayout v-else>
     <div class="container">
       <div class="text-center m-4 p-4">
         <p class="display-4 fw-bold font-monospace">{{ error.statusCode }}</p>
