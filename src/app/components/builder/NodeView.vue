@@ -18,6 +18,7 @@ import BuilderGallery from './blocks/Gallery.vue'
 import BuilderVideo from './blocks/Video.vue'
 import BuilderSlider from './blocks/Slider.vue'
 import BuilderGlobal from './blocks/Global.vue'
+import BuilderCustom from './blocks/Custom.vue'
 
 // ノード 1 つを、種類(type)に対応する部品で描く。子は各部品がこの部品で再帰的に描く。
 // 種類 → 部品の対応表に足すだけで、ブロックの種類を増やせる(biscuit の BlockRegistry にも同じ種類を足す)。
@@ -44,6 +45,7 @@ const blocks: Record<string, Component> = {
   'video': BuilderVideo,
   'slider': BuilderSlider,
   'global': BuilderGlobal,
+  'custom': BuilderCustom,
 }
 
 const block = computed(() => blocks[props.node.type])
