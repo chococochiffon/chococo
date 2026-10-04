@@ -23,26 +23,14 @@ const form = reactive({
   categoryId: props.galleryImage?.category?.id ?? null as number | null,
   comment: props.galleryImage?.comment ?? '',
 })
-const file = ref<File | null>(null)
-const preview = ref<string | null>(null)
+// 選んだ画像(保存するまでは手元でプレビューする)
+const { file, preview, select: setFile } = useFilePreview()
 const { errors, submitting: saving, submit } = useFormSubmit({ generalErrorFields: ['approval'] })
 
 const approval = computed(() => props.galleryImage?.approval ?? 'draft')
 
-// 選んだ画像(保存するまでは手元でプレビューする)
-function setFile(selected: File | null) {
-  if (preview.value) {
-    URL.revokeObjectURL(preview.value)
-  }
-
-  file.value = selected
-  preview.value = selected ? URL.createObjectURL(selected) : null
-}
-
-onBeforeUnmount(() => setFile(null))
-
 async function save(submitAfterSave: boolean) {
-  if (approval.value === 'published' && !skipsApproval.value && !window.confirm('公開中の画像を保存すると承認待ちに戻り、管理者が承認するまで公開されなくなります。保存しますか?')) {
+  if (!confirmSavingPublished(approval.value, skipsApproval.value, '画像')) {
     return
   }
 
@@ -80,26 +68,10 @@ async function save(submitAfterSave: boolean) {
 
     setFile(null)
 
-    if (submitAfterSave && galleryImage.approval === 'draft') {
-      galleryImage = (await $fetch<{ data: MyGalleryImage }>(`/api/me/gallery-images/${galleryImage.id}/submit`, { method: 'POST' })).data
-    }
+    galleryImage = await submitAfterSaving(galleryImage, '/api/me/gallery-images', submitAfterSave)
 
-    emit('saved', galleryImage, savedMessage(galleryImage))
+    emit('saved', galleryImage, approvalSavedMessage('画像', approval.value, galleryImage.approval))
   })
-}
-
-function savedMessage(galleryImage: MyGalleryImage): string {
-  if (galleryImage.approval === 'published') {
-    return approval.value === 'published' ? '画像を保存しました。' : '画像を保存し、公開しました。'
-  }
-
-  if (galleryImage.approval === 'pending') {
-    return approval.value === 'published'
-      ? '画像を保存しました。管理者が承認するまで、公開側には表示されません。'
-      : '画像を保存し、承認を申請しました。'
-  }
-
-  return '画像を下書きに保存しました。'
 }
 </script>
 

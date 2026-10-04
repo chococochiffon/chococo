@@ -31,8 +31,8 @@ const form = reactive({
   slug: props.article?.slug ?? '',
   tags: (props.article?.tags ?? []).map(tag => tag.name),
 })
-const thumbnail = ref<File | null>(null)
-const thumbnailPreview = ref<string | null>(null)
+// 選んだサムネイル画像(保存するまでは手元でプレビューする)
+const { file: thumbnail, preview: thumbnailPreview, select: setThumbnail } = useFilePreview()
 // 申請(approval)の入力エラー(下書きでないなど)は項目の欄がないため、フォームの上にまとめて出す
 const { errors, submitting: saving, submit } = useFormSubmit({ generalErrorFields: ['approval'] })
 const previewing = ref(false)
@@ -60,22 +60,6 @@ const previewPath = computed(() => {
 
 const approval = computed(() => props.article?.approval ?? 'draft')
 
-// 選んだサムネイル画像(保存するまでは手元でプレビューする)
-function setThumbnail(file: File | null) {
-  if (thumbnailPreview.value) {
-    URL.revokeObjectURL(thumbnailPreview.value)
-  }
-
-  thumbnail.value = file
-  thumbnailPreview.value = file ? URL.createObjectURL(file) : null
-}
-
-onBeforeUnmount(() => {
-  if (thumbnailPreview.value) {
-    URL.revokeObjectURL(thumbnailPreview.value)
-  }
-})
-
 // プレビューに渡す記事(公開側の記事の本文と同じ部品で表示する)
 const previewArticle = computed<Article>(() => ({
   id: props.article?.id ?? 0,
@@ -93,7 +77,7 @@ const previewArticle = computed<Article>(() => ({
 }))
 
 async function save(submitAfterSave: boolean) {
-  if (approval.value === 'published' && !skipsApproval.value && !window.confirm('公開中の記事を保存すると承認待ちに戻り、管理者が承認するまで公開されなくなります。保存しますか?')) {
+  if (!confirmSavingPublished(approval.value, skipsApproval.value, '記事')) {
     return
   }
 
@@ -116,31 +100,15 @@ async function save(submitAfterSave: boolean) {
       setThumbnail(null)
     }
 
-    if (submitAfterSave && article.approval === 'draft') {
-      article = (await $fetch<{ data: MyArticle }>(`/api/me/articles/${article.id}/submit`, { method: 'POST' })).data
-    }
+    article = await submitAfterSaving(article, '/api/me/articles', submitAfterSave)
 
-    emit('saved', article, savedMessage(article))
+    emit('saved', article, approvalSavedMessage('記事', approval.value, article.approval))
   })
 }
 
 // 本文の画像のアップロードに失敗したときは、フォームの上にまとめて出す
 function showUploadError(message: string) {
   errors.value = { ...errors.value, _: message }
-}
-
-function savedMessage(article: MyArticle): string {
-  if (article.approval === 'published') {
-    return approval.value === 'published' ? '記事を保存しました。' : '記事を保存し、公開しました。'
-  }
-
-  if (article.approval === 'pending') {
-    return approval.value === 'published'
-      ? '記事を保存しました。管理者が承認するまで、公開側には表示されません。'
-      : '記事を保存し、承認を申請しました。'
-  }
-
-  return '記事を下書きに保存しました。'
 }
 </script>
 
