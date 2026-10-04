@@ -38,6 +38,45 @@ export function useApprovalFilter() {
 }
 
 /**
+ * 公開中のものを保存する前の確認(保存すると承認待ちに戻るため)。承認を飛ばす権限があれば聞かない。続けるなら true。
+ * - noun: 確認の文言に使う名前(記事・画像)
+ */
+export function confirmSavingPublished(approval: ArticleApproval, skipsApproval: boolean, noun: string): boolean {
+  return approval !== 'published' || skipsApproval
+    || window.confirm(`公開中の${noun}を保存すると承認待ちに戻り、管理者が承認するまで公開されなくなります。保存しますか?`)
+}
+
+/**
+ * 保存したあと、「保存して申請」なら承認を申請する(下書きのときだけ)。申請後(申請しなければ保存後)のものを返す。
+ * - endpoint: biscuit の API の中継先(例: /api/me/articles)。申請は {endpoint}/{id}/submit
+ */
+export async function submitAfterSaving<T extends { id: number, approval: ArticleApproval }>(saved: T, endpoint: string, requested: boolean): Promise<T> {
+  if (!requested || saved.approval !== 'draft') {
+    return saved
+  }
+
+  return (await $fetch<{ data: T }>(`${endpoint}/${saved.id}/submit`, { method: 'POST' })).data
+}
+
+/**
+ * 保存したあとの文言。保存の前(before)と後(after)の公開ステータスで、公開・申請・承認待ちに戻ったことを伝える。
+ * - noun: 文言に使う名前(記事・画像)
+ */
+export function approvalSavedMessage(noun: string, before: ArticleApproval, after: ArticleApproval): string {
+  if (after === 'published') {
+    return before === 'published' ? `${noun}を保存しました。` : `${noun}を保存し、公開しました。`
+  }
+
+  if (after === 'pending') {
+    return before === 'published'
+      ? `${noun}を保存しました。管理者が承認するまで、公開側には表示されません。`
+      : `${noun}を保存し、承認を申請しました。`
+  }
+
+  return `${noun}を下書きに保存しました。`
+}
+
+/**
  * 編集画面の操作(保存後の作り直し・承認の申請の取り下げ・削除)。
  * - endpoint: biscuit の API の中継先(例: /api/me/articles)。取り下げは {endpoint}/{id}/withdraw、削除は {endpoint}/{id}
  * - listPath: 削除したあとに戻る一覧のパス。flashKey はその一覧に渡すメッセージの key
