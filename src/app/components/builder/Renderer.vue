@@ -42,7 +42,9 @@ useHead({
    セクションの面は中身の幅を最大 1200px にして中央に寄せる */
 .builder-free {
   display: grid;
-  grid-template: 1fr / 1fr;
+  /* 行は中身に合わせて上に詰める(最小の高さのあるボックスで、縦 1 列のときに 1 行目が引き伸ばされないように) */
+  grid-template: auto / 1fr;
+  align-content: start;
 }
 .builder-free > * {
   align-self: start;
