@@ -1,5 +1,6 @@
 import type { BuilderContent, BuilderDevice, BuilderNode, BuilderStyles, BuilderVisibilityDevice } from '~/types/builder'
 import { builderComponentChildren } from './builder'
+import { builderLayoutRules } from './builderLayout'
 
 // ページビルダーのブロックのスタイルと、表示しない端末で隠す規則を CSS にする(許した形の値だけ)
 
@@ -102,7 +103,7 @@ function styleRules(node: BuilderNode, styles: BuilderStyles | undefined): strin
 }
 
 /**
- * 内容のすべてのブロックのスタイルと、表示しない端末で隠す規則を、1 つの CSS にする。
+ * 内容のすべてのブロックのスタイル・自由配置(v2)の位置と大きさ(builderLayout.ts)と、表示しない端末で隠す規則を、1 つの CSS にする。
  * 端末ごとの上書きはインラインの style では書けないため、デスクトップの値も含めてこの CSS で効かせる(あとの規則ほど優先される)。
  */
 export function builderCss(content: BuilderContent): string {
@@ -117,9 +118,10 @@ export function builderCss(content: BuilderContent): string {
   }
   walk(content.children)
 
-  const base = nodes.flatMap(node => styleRules(node, node.styles))
+  const layout = builderLayoutRules(content)
+  const base = [...nodes.flatMap(node => styleRules(node, node.styles)), ...layout.desktop]
   const responsive = (Object.keys(BUILDER_MEDIA_QUERIES) as BuilderDevice[]).map((device) => {
-    const rules = nodes.flatMap(node => styleRules(node, node.responsive?.[device]))
+    const rules = [...nodes.flatMap(node => styleRules(node, node.responsive?.[device])), ...layout[device]]
     return rules.length ? `@media ${BUILDER_MEDIA_QUERIES[device]}{${rules.join('')}}` : ''
   })
 

@@ -8,10 +8,15 @@ const props = defineProps<{
 }>()
 
 const children = computed(() => builderComponentChildren(props.node))
+
+// 中身が自由配置(v2)なら、部品の一番外側が面になる(中のブロックを座標で置く)
+const version = builderComponentVersion(props.node)
+const isFree = version >= BUILDER_FREE_LAYOUT_VERSION
+provide(builderVersionKey, version)
 </script>
 
 <template>
-  <div class="builder-custom">
+  <div class="builder-custom" :class="{ 'builder-free': isFree }">
     <BuilderNodeView v-for="child in children" :key="child.id" :node="child" />
   </div>
 </template>

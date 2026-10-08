@@ -8,6 +8,9 @@ const props = defineProps<{
 }>()
 
 const children = computed(() => builderComponentChildren(props.node))
+
+// 中身のセクションは、ページではなく中身の内容の版で描く
+provide(builderVersionKey, builderComponentVersion(props.node))
 </script>
 
 <template>
