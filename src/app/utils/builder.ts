@@ -6,8 +6,22 @@ import type { BuilderNode } from '~/types/builder'
 // スタイルの CSS は builderStyles.ts、テーマは builderTheme.ts、Custom CSS とクラス名は builderCustomCss.ts。
 // 値は biscuit が保存時に検証しているが、ここでも許した形のものだけを出す(二重の守り)
 
-// 描ける内容の版(biscuit の SchemaMigrator::CURRENT_VERSION)
-export const BUILDER_SUPPORTED_VERSION = 1
+// 描ける内容の版(biscuit の SchemaMigrator。v1 は行・カラムで流し込む配置、v2 は自由配置)
+export const BUILDER_SUPPORTED_VERSIONS: readonly number[] = [1, 2]
+
+// 自由配置(ブロックを座標で置く)の版
+export const BUILDER_FREE_LAYOUT_VERSION = 2
+
+// 描いている内容の版(Renderer が内容の版を、コンポーネントのブロックが中身の版を渡す。セクション・独自コンポーネントが自由配置かを決める)
+export const builderVersionKey: InjectionKey<number> = Symbol('builderVersion')
+
+/**
+ * コンポーネントのブロック(global・custom)の中身の内容の版(biscuit が data.version に入れる。分からなければ 1)。
+ */
+export function builderComponentVersion(node: BuilderNode): number {
+  const version = node.data?.version
+  return typeof version === 'number' && BUILDER_SUPPORTED_VERSIONS.includes(version) ? version : 1
+}
 
 /**
  * コンポーネントのブロック(global・custom)の中身のノード(biscuit がグローバルコンポーネントは公開中の内容を、
