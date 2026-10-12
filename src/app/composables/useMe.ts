@@ -1,4 +1,4 @@
-import type { Me } from '~/types/api'
+import type { Me, TwoFactorMethod } from '~/types/api'
 
 /**
  * マイページのログイン状態(ログイン中のユーザー)と、ログイン・ログアウト・再取得。
@@ -26,9 +26,12 @@ export function useMe() {
     return checked.value ? me.value : await fetchMe()
   }
 
-  // ログインは二段階: メールアドレスとパスワードで確認コードをメールで送ってもらい(login)、コードを入れてログインする(verifyLoginCode)
-  async function login(email: string, password: string): Promise<void> {
-    await $fetch('/api/auth/login', { method: 'POST', body: { email, password } })
+  // ログインは二段階: メールアドレスとパスワードで確認コードをメールで送ってもらい(login)、コードを入れてログインする(verifyLoginCode)。
+  // 認証アプリを設定したユーザーはメールが届かず、認証アプリのコードを入れる(login が 'totp' を返す)
+  async function login(email: string, password: string): Promise<TwoFactorMethod> {
+    const response = await $fetch<{ data: { method: TwoFactorMethod } }>('/api/auth/login', { method: 'POST', body: { email, password } })
+
+    return response.data.method
   }
 
   async function verifyLoginCode(code: string): Promise<void> {
@@ -41,10 +44,15 @@ export function useMe() {
     await $fetch('/api/auth/login-resend', { method: 'POST' })
   }
 
+  // 認証アプリを使えないとき(機種変更など)に、メールで確認コードを送ってもらう
+  async function sendLoginEmailCode(): Promise<void> {
+    await $fetch('/api/auth/login-email-code', { method: 'POST' })
+  }
+
   async function logout(): Promise<void> {
     await $fetch('/api/auth/logout', { method: 'POST' })
     me.value = null
   }
 
-  return { me, fetchMe, ensureMe, login, verifyLoginCode, resendLoginCode, logout }
+  return { me, fetchMe, ensureMe, login, verifyLoginCode, resendLoginCode, sendLoginEmailCode, logout }
 }
