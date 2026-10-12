@@ -262,12 +262,29 @@ export interface Layout {
 }
 
 // ログイン中のユーザー(マイページ。GET /api/me)。detail はユーザー詳細が未登録なら null
+// 二段階認証の方法(email: メールの確認コード、totp: 認証アプリ(Google Authenticator))
+export type TwoFactorMethod = 'email' | 'totp'
+
+// マイページの二段階認証の設定(GET /api/me/two-factor)
+export interface TwoFactorStatus {
+  method: TwoFactorMethod
+  confirmed_at: string | null
+}
+
+// 認証アプリの設定に使う秘密鍵と QR コード(GET /api/me/two-factor/setup)
+export interface TwoFactorSetup {
+  secret: string
+  qr_code_svg: string
+  otpauth_uri: string
+}
+
 export interface Me {
   id: number
   name: string
   email: string
   // 記事を管理者の承認なしで公開できるか(biscuit の管理画面で設定する)
   skip_approval: boolean
+  two_factor_method: TwoFactorMethod
   detail: {
     first_name: string
     family_name: string

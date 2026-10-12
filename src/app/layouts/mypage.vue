@@ -21,6 +21,7 @@ const menuGroups = [
   [
     { to: '/mypage/profile', icon: 'bi-person-circle', label: 'プロフィール', exact: true },
     { to: '/mypage/password', icon: 'bi-key', label: 'パスワードの変更', exact: true },
+    { to: '/mypage/two-factor', icon: 'bi-shield-lock', label: '二段階認証', exact: true },
   ],
 ]
 

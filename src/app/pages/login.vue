@@ -1,10 +1,13 @@
 <script setup lang="ts">
+import type { TwoFactorMethod } from '~/types/api'
+
 // マイページのログイン。ログインできるのは biscuit の管理画面で登録したユーザー(と招待を受けたユーザー)だけ。
-// 二段階認証で、メールアドレスとパスワードが正しければ確認コードがメールで届き、そのコードを入れるとログインできる
+// 二段階認証で、メールアドレスとパスワードが正しければ確認コードがメールで届き、そのコードを入れるとログインできる。
+// 認証アプリ(Google Authenticator)を設定したユーザーは、メールの代わりに認証アプリのコードを入れる(使えないときは「メールにコードを送る」)
 definePageMeta({ headerNavigation: false })
 
 const route = useRoute()
-const { me, fetchMe, login, verifyLoginCode, resendLoginCode } = useMe()
+const { me, fetchMe, login, verifyLoginCode, resendLoginCode, sendLoginEmailCode } = useMe()
 
 // ログイン後に戻るページ(サイト内のパスだけ受け付ける)
 const redirectTo = computed(() => {
@@ -20,8 +23,9 @@ if (me.value) {
   await navigateTo(redirectTo.value, { replace: true })
 }
 
-// 確認コードの入力に進んだか
+// 確認コードの入力に進んだか・コードの受け取り方(メールか認証アプリか)
 const codeSent = ref(false)
+const method = ref<TwoFactorMethod>('email')
 const status = ref('')
 const email = ref('')
 const password = ref('')
@@ -34,7 +38,7 @@ const { errors, submitting, submit: send } = useFormSubmit({
 
 async function submit() {
   await send(async () => {
-    await login(email.value, password.value)
+    method.value = await login(email.value, password.value)
     password.value = ''
     status.value = ''
     codeSent.value = true
@@ -55,6 +59,18 @@ async function resend() {
     await resendLoginCode()
     code.value = ''
     status.value = '確認コードを送り直しました。'
+  })
+}
+
+// 認証アプリを使えないとき(機種変更など)は、メールの確認コードに切り替える
+async function sendEmailCode() {
+  status.value = ''
+
+  await send(async () => {
+    await sendLoginEmailCode()
+    method.value = 'email'
+    code.value = ''
+    status.value = 'メールに確認コードを送りました。'
   })
 }
 
@@ -95,11 +111,14 @@ useSeoMeta({ title: 'ログイン', robots: 'noindex' })
           <form v-else class="card card-body shadow-sm" novalidate @submit.prevent="verify">
             <div v-if="status" class="alert alert-success small" role="status">{{ status }}</div>
             <div v-if="errors._" class="alert alert-danger small" role="alert">{{ errors._ }}</div>
-            <p class="small text-body-secondary">
+            <p v-if="method === 'totp'" class="small text-body-secondary">
+              認証アプリ(Google Authenticator など)に表示されている 6 桁のコードを入力してください。
+            </p>
+            <p v-else class="small text-body-secondary">
               {{ email }} に確認コードを送りました。メールに書かれた 6 桁のコードを入力してください。
             </p>
             <div class="mb-4">
-              <label for="login-code" class="form-label">確認コード</label>
+              <label for="login-code" class="form-label">{{ method === 'totp' ? '認証アプリのコード' : '確認コード' }}</label>
               <input
                 id="login-code"
                 v-model="code"
@@ -115,7 +134,8 @@ useSeoMeta({ title: 'ログイン', robots: 'noindex' })
             </div>
             <button type="submit" class="btn btn-primary w-100" :disabled="submitting">ログイン</button>
             <div class="d-flex justify-content-between small mt-3">
-              <button type="button" class="btn btn-link btn-sm p-0" :disabled="submitting" @click="resend">コードを送り直す</button>
+              <button v-if="method === 'totp'" type="button" class="btn btn-link btn-sm p-0" :disabled="submitting" @click="sendEmailCode">メールにコードを送る</button>
+              <button v-else type="button" class="btn btn-link btn-sm p-0" :disabled="submitting" @click="resend">コードを送り直す</button>
               <button type="button" class="btn btn-link btn-sm p-0 text-secondary" @click="restart">メールアドレスの入力に戻る</button>
             </div>
           </form>
